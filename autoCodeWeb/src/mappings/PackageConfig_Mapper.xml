@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.autocode.mapper.PackageConfigMapper">
+	<sql id="columns">
+		packageConfigId,applyFrame,packageName,packagePath,memo
+	</sql>
+	
+	<insert id="insert" parameterType="PackageConfig"  useGeneratedKeys="true" keyProperty="packageConfigId">
+		INSERT INTO ac_packageconfig (applyFrame,packageName,packagePath,memo)
+		VALUES ( #{applyFrame},#{packageName},#{packagePath},#{memo} )
+	</insert>
+
+	<update id="update" parameterType="PackageConfig">
+		UPDATE ac_packageconfig
+ 		SET applyFrame=#{applyFrame},packageName=#{packageName},packagePath=#{packagePath},memo=#{memo}
+		WHERE packageConfigId = #{packageConfigId}
+	</update>
+
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM ac_packageconfig WHERE packageConfigId = #{packageConfigId}
+	</delete>
+
+	<select id="queryObjectCount" resultType="Integer" parameterType="PackageConfig">
+		SELECT COUNT(1) FROM ac_packageconfig 
+		<where>
+			<if test="applyFrame!=null and applyFrame!=''">
+				 applyFrame = #{applyFrame}
+			</if>
+			<if test="searchColumn!=null and searchColumn!='' and searchValue!=null and searchValue!=''">
+				AND ${searchColumn} like '%${searchValue}%'
+			</if>
+		</where>
+	</select>
+
+	<select id="queryObjectList" resultType="PackageConfig" parameterType="PackageConfig">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_packageconfig 
+		<where>
+			<if test="applyFrame!=null and applyFrame!=''">
+				 applyFrame = #{applyFrame}
+			</if>
+			<if test="searchColumn!=null and searchColumn!='' and searchValue!=null and searchValue!=''">
+				AND ${searchColumn} like '%${searchValue}%'
+			</if>
+		</where>
+		ORDER BY packageConfigId
+		LIMIT ${pageStart},${pageSize}
+	</select>
+
+	<select id="querySingleObject" resultType="PackageConfig" parameterType="Integer">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_packageconfig 
+		WHERE packageConfigId = #{packageConfigId}
+	</select>
+
+	<select id="queryObjectSelect" resultType="PackageConfig" parameterType="PackageConfig">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_packageconfig 
+	</select>
+	
+	<select id="queryObjectListForColumnName" resultType="PackageConfig" parameterType="Map">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_packageconfig WHERE ${columnName}=#{columnValue}
+	</select>
+</mapper>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.autocode.mapper.ConfigMapper">
+	<sql id="columns">
+		configId,configName,configValue,memo
+	</sql>
+	
+	<insert id="insert" parameterType="Config"  useGeneratedKeys="true" keyProperty="configId">
+		INSERT INTO ac_config (configName,configValue,memo)
+		VALUES ( #{configName},#{configValue},#{memo} )
+	</insert>
+
+	<update id="update" parameterType="Config">
+		UPDATE ac_config
+ 		SET configName=#{configName},configValue=#{configValue},memo=#{memo}
+		WHERE configId = #{configId}
+	</update>
+
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM ac_config WHERE configId = #{configId}
+	</delete>
+
+	<select id="queryObjectCount" resultType="Integer" parameterType="Config">
+		SELECT COUNT(1) FROM ac_config 
+		<where>
+			<if test="searchColumn!=null and searchColumn!='' and searchValue!=null and searchValue!=''">
+				 ${searchColumn} like '%${searchValue}%'
+			</if>
+			<if test="(searchColumn==null || searchColumn=='') and searchValue!=null and searchValue!=''">
+				configName like '%${searchValue}%' OR configValue like '%${searchValue}%'
+			</if>
+		</where>
+	</select>
+
+	<select id="queryObjectList" resultType="Config" parameterType="Config">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_config 
+		<where>
+			<if test="searchColumn!=null and searchColumn!='' and searchValue!=null and searchValue!=''">
+				 ${searchColumn} like '%${searchValue}%'
+			</if>
+			<if test="(searchColumn==null || searchColumn=='') and searchValue!=null and searchValue!=''">
+				configName like '%${searchValue}%' OR configValue like '%${searchValue}%'
+			</if>
+		</where>
+		<if test="sortColumn!=null and sortColumn!=''">
+			ORDER BY ${sortColumn}
+		</if>
+		<if test="sortColumn==null||sortColumn==''">
+			ORDER BY configId
+		</if>
+		LIMIT ${pageStart},${pageSize}
+	</select>
+
+	<select id="querySingleObject" resultType="Config" parameterType="Integer">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_config 
+		WHERE configId = #{configId}
+	</select>
+
+	<select id="queryObjectSelect" resultType="Config" parameterType="Config">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_config 
+	</select>
+	
+	<select id="queryObjectListForColumnName" resultType="Config" parameterType="Map">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_config WHERE ${columnName}=#{columnValue}
+	</select>
+</mapper>

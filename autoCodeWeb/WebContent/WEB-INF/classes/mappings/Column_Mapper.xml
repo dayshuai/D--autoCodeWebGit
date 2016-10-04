@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.autocode.mapper.ColumnMapper">
+	<sql id="columns">
+		columnId,projectId,tableId,mappingName,columnName,columnZhName,mappingType,columnType,showType,isPrimary,isUpdate,isDefault,isRepeat,isShow,isQuery,isImportPackage,isCheck,showOrder
+	</sql>
+	
+	<insert id="insert" parameterType="Column"  useGeneratedKeys="true" keyProperty="columnId">
+		INSERT INTO ac_column (projectId,tableId,mappingName,columnName,columnZhName,mappingType,columnType,showType,isPrimary,isUpdate,isDefault,isRepeat,isShow,isQuery,isImportPackage,isCheck,showOrder)
+		VALUES ( #{projectId},#{tableId},#{mappingName},#{columnName},#{columnZhName},#{mappingType},#{columnType},#{showType},#{isPrimary},#{isUpdate},#{isDefault},#{isRepeat},#{isShow},#{isQuery},#{isImportPackage},#{isCheck},#{showOrder} )
+	</insert>
+
+	<update id="update" parameterType="Column">
+		UPDATE ac_column
+ 		SET projectId=#{projectId},tableId=#{tableId},mappingName=#{mappingName},columnName=#{columnName},columnZhName=#{columnZhName},mappingType=#{mappingType},columnType=#{columnType},showType=#{showType},isPrimary=#{isPrimary},isUpdate=#{isUpdate},isDefault=#{isDefault},isRepeat=#{isRepeat},isShow=#{isShow},isQuery=#{isQuery},isImportPackage=#{isImportPackage},isCheck=#{isCheck},showOrder=#{showOrder}
+		WHERE columnId = #{columnId}
+	</update>
+
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM ac_column WHERE columnId = #{value}
+	</delete>
+	
+	<delete id="deleteObjectByTableId" parameterType="Integer">
+		DELETE FROM ac_column WHERE tableId = #{value}
+	</delete>
+	
+	<delete id="deleteObjectByProjectId" parameterType="Integer">
+		DELETE FROM ac_column WHERE projectId = #{projectId}
+	</delete>
+
+	<select id="queryObjectCount" resultType="Integer" parameterType="Column">
+		SELECT COUNT(1) FROM ac_column 
+		WHERE projectId=${projectId} 
+		<if test="tableId!=null">
+			AND tableId=#{tableId}
+		</if>
+		<if test="searchValue!=null and searchValue!=''">
+		 	AND (columnName like '%${searchValue}%' OR mappingName like '%${searchValue}%' OR columnZhName like '%${searchValue}%' OR showType like '%${searchValue}%' OR columnType like '%${searchValue}%')
+		</if>
+	</select>
+
+	<select id="queryObjectList" resultType="Column" parameterType="Column">
+		SELECT
+		c.*,t.tableName,p.projectName 
+		FROM ac_column c,ac_project p,ac_table t
+		WHERE c.tableId=t.tableId and p.projectId=c.projectId and c.projectId=${projectId}
+		<if test="tableId!=null">
+			 AND c.tableId=#{tableId}
+		</if>
+		<if test="searchValue!=null and searchValue!=''">
+		 	AND (columnName like '%${searchValue}%' OR c.mappingName like '%${searchValue}%' OR columnZhName like '%${searchValue}%' OR showType like '%${searchValue}%' OR columnType like '%${searchValue}%')
+		</if>
+		ORDER BY columnId
+		LIMIT ${pageStart},${pageSize}
+	</select>
+
+	<select id="querySingleObject" resultType="Column" parameterType="Integer">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_column 
+		WHERE columnId = #{columnId}
+	</select>
+
+	<select id="queryObjectSelect" resultType="Column" parameterType="Column">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_column 
+	</select>
+	
+	<select id="queryObjectCountByTableId" resultType="Integer" parameterType="Column">
+		SELECT COUNT(1) FROM ac_column where tableId=#{value}
+	</select>
+	
+	<select id="queryObjectListByTableIds" resultType="Column">
+		SELECT 
+		<include refid="columns"/>
+		FROM ac_column where tableId in 
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">  
+			#{item}  
+		</foreach>  
+		AND (isPrimary='YES' OR columnType='Integer')
+	</select>
+	
+	<select id="queryObjectListForConvertError" resultType="Column" parameterType="Map">
+		SELECT * FROM ac_column WHERE projectId=#{projectId} AND (columnName=#{errorName} or columnZhName=#{errorName} or columnType=#{errorName} )
+	</select>
+	
+	<select id="queryObjectListByTableId" resultType="Column" parameterType="Integer">
+		SELECT * FROM ac_column WHERE tableId=#{value} ORDER BY showOrder
+	</select>
+	
+</mapper>

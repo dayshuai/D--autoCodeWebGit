@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.autocode.mapper.ProjectMapper">
+	<sql id="columns">
+		projectId,projectTitle,projectName,projectFrame,requestPostfix,databaseName,databaseType,databaseIP,databasePort,databaseUser,databasePwd,createDate,isDefault,isValidation
+	</sql>
+	
+	<insert id="insert" parameterType="Project"  useGeneratedKeys="true" keyProperty="projectId">
+		INSERT INTO ac_project (projectTitle,projectName,projectFrame,requestPostfix,databaseName,databaseType,databaseIp,databasePort,databaseUser,databasePwd,createDate,isDefault,isValidation)
+		VALUES ( #{projectTitle},#{projectName},#{projectFrame},#{requestPostfix},#{databaseName},#{databaseType},#{databaseIp},#{databasePort},#{databaseUser},#{databasePwd},#{createDate},#{isDefault},#{isValidation} )
+	</insert>
+	
+	<update id="updateAllDefaultNo">
+		UPDATE ac_project SET isDefault='NO' WHERE isDefault='YES'
+	</update>
+	
+	<update id="update" parameterType="Project">
+		UPDATE ac_project
+ 		SET projectTitle=#{projectTitle},projectName=#{projectName},projectFrame=#{projectFrame},requestPostfix=#{requestPostfix},databaseName=#{databaseName},databaseType=#{databaseType},databaseIp=#{databaseIp},databasePort=#{databasePort},databaseUser=#{databaseUser},databasePwd=#{databasePwd},createDate=#{createDate},isDefault=#{isDefault},isValidation=#{isValidation}
+		WHERE projectId = #{projectId}
+	</update>
+
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM ac_project WHERE projectId = #{projectId}
+	</delete>
+
+	<select id="queryObjectCount" resultType="Integer" parameterType="Project">
+		SELECT COUNT(1) FROM ac_project 
+		<where>
+			<if test="searchColumn!=null and searchColumn!='' and searchValue!=null and searchValue!=''">
+				 ${searchColumn} like '%${searchValue}%'
+			</if>
+			<if test="(searchColumn==null || searchColumn=='') and searchValue!=null and searchValue!=''">
+				projectName like '%${searchValue}%' OR projectFrame like '%${searchValue}%' OR databaseName like '%${searchValue}%'
+			</if>
+		</where>
+	</select>
+
+	<select id="queryObjectList" resultType="Project" parameterType="Project">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_project 
+		<where>
+			<if test="searchColumn!=null and searchColumn!='' and searchValue!=null and searchValue!=''">
+				 ${searchColumn} like '%${searchValue}%'
+			</if>
+			<if test="(searchColumn==null || searchColumn=='') and searchValue!=null and searchValue!=''">
+				projectName like '%${searchValue}%' OR projectFrame like '%${searchValue}%' OR databaseName like '%${searchValue}%'
+			</if>
+		</where>
+		<if test="sortColumn!=null and sortColumn!=''">
+			ORDER BY ${sortColumn}
+		</if>
+		<if test="sortColumn==null||sortColumn==''">
+			ORDER BY projectId DESC
+		</if>
+		LIMIT ${pageStart},${pageSize}
+	</select>
+
+	<select id="querySingleObject" resultType="Project" parameterType="Integer">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_project 
+		WHERE projectId = #{projectId}
+	</select>
+
+	<select id="queryObjectListByIsValidation" resultType="Project">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_project 
+		WHERE isValidation = 'YES' ORDER BY isDefault desc
+	</select>
+
+	<select id="queryObjectSelect" resultType="Project">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_project 
+	</select>
+</mapper>

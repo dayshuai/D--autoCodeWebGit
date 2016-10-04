@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.autocode.mapper.PackageConvertMapper">
+	<sql id="columns">
+		packageConvertId,className,packageName
+	</sql>
+	
+	<insert id="insert" parameterType="PackageConvert"  useGeneratedKeys="true" keyProperty="packageConvertId">
+		INSERT INTO ac_packageConvert (className,packageName)
+		VALUES ( #{className},#{packageName} )
+	</insert>
+
+	<update id="update" parameterType="PackageConvert">
+		UPDATE ac_packageConvert
+ 		SET className=#{className},packageName=#{packageName}
+		WHERE packageConvertId = #{packageConvertId}
+	</update>
+
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM ac_packageConvert WHERE packageConvertId = #{packageConvertId}
+	</delete>
+
+	<select id="queryObjectCount" resultType="Integer" parameterType="PackageConvert">
+		SELECT COUNT(1) FROM ac_packageConvert 
+		<where>
+			<if test="searchColumn!=null and searchColumn!='' and searchValue!=null and searchValue!=''">
+				 ${searchColumn} like '%${searchValue}%'
+			</if>
+			<if test="(searchColumn==null || searchColumn=='') and searchValue!=null and searchValue!=''">
+				columnName like '%${searchValue}%' OR convertName like '%${searchValue}%'
+			</if>
+		</where>
+	</select>
+
+	<select id="queryObjectList" resultType="PackageConvert" parameterType="PackageConvert">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_packageConvert 
+		<where>
+			<if test="searchColumn!=null and searchColumn!='' and searchValue!=null and searchValue!=''">
+				 ${searchColumn} like '%${searchValue}%'
+			</if>
+			<if test="(searchColumn==null || searchColumn=='') and searchValue!=null and searchValue!=''">
+				columnName like '%${searchValue}%' OR convertName like '%${searchValue}%'
+			</if>
+		</where>
+		<if test="sortColumn!=null and sortColumn!=''">
+			ORDER BY ${sortColumn}
+		</if>
+		<if test="sortColumn==null||sortColumn==''">
+			ORDER BY packageConvertId
+		</if>
+		LIMIT ${pageStart},${pageSize}
+	</select>
+
+	<select id="querySingleObject" resultType="PackageConvert" parameterType="Integer">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_packageConvert 
+		WHERE packageConvertId = #{packageConvertId}
+	</select>
+
+	<select id="queryObjectListByColumns" resultType="PackageConvert" parameterType="PackageConvert">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_packageConvert WHERE className=#{className}
+	</select>
+	
+	<select id="queryObjectSelect" resultType="PackageConvert" parameterType="PackageConvert">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_packageConvert 
+	</select>
+</mapper>

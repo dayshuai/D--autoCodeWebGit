@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.autocode.mapper.TableMapper">
+	<sql id="columns">
+		tableId,projectId,tableTitle,mappingName,tableName,validationDelete,tableMemo
+	</sql>
+	
+	<insert id="insert" parameterType="Table"  useGeneratedKeys="true" keyProperty="tableId">
+		INSERT INTO ac_table (projectId,tableTitle,mappingName,tableName,validationDelete,tableMemo)
+		VALUES ( #{projectId},#{tableTitle},#{mappingName},#{tableName},#{validationDelete},#{tableMemo} )
+	</insert>
+
+	<update id="update" parameterType="Table">
+		UPDATE ac_table
+ 		SET projectId=#{projectId},tableTitle=#{tableTitle},mappingName=#{mappingName},tableName=#{tableName},validationDelete=#{validationDelete},tableMemo=#{tableMemo}
+		WHERE tableId = #{tableId}
+	</update>
+
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM ac_table WHERE tableId = #{tableId}
+	</delete>
+	
+	<delete id="deleteObjectByProjectId" parameterType="Integer">
+		DELETE FROM ac_table WHERE projectId = #{projectId}
+	</delete>
+
+	<select id="queryObjectCount" resultType="Integer" parameterType="Table">
+		SELECT COUNT(1) FROM ac_table where projectId=#{projectId}
+		<if test="(searchColumn==null || searchColumn=='') and searchValue!=null and searchValue!=''">
+			and (mappingName like '%${searchValue}%' OR tableName like '%${searchValue}%' OR tableTitle like '%${searchValue}%' OR tableMemo like '%${searchValue}%')
+		</if>
+	</select>
+
+	<select id="queryObjectList" resultType="Table" parameterType="Table">
+		SELECT
+		t.tableId,t.projectId,t.mappingName,t.tableName,t.tableTitle,t.validationDelete,t.tableMemo,p.projectName
+		FROM ac_table t inner join ac_project p on p.projectId=t.projectId 
+		WHERE t.projectId=#{projectId}
+		<if test="(searchColumn==null || searchColumn=='') and searchValue!=null and searchValue!=''">
+		 	AND (t.mappingName like '%${searchValue}%' OR tableName like '%${searchValue}%' OR tableTitle like '%${searchValue}%' OR tableMemo like '%${searchValue}%')
+		</if>
+		ORDER BY tableId
+		LIMIT ${pageStart},${pageSize}
+	</select>
+
+	<select id="querySingleObject" resultType="Table" parameterType="Integer">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_table 
+		WHERE tableId = #{tableId}
+	</select>
+
+	<select id="queryObjectSelect" resultType="Table" parameterType="Table">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_table 
+	</select>
+	
+	<select id="queryObjectListByProjectId" resultType="Table" parameterType="Integer">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_table WHERE projectId = #{value}
+	</select>
+	
+	<select id="queryObjectListByColumns" resultType="Table" parameterType="Table">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_table WHERE projectId=#{projectId} AND mappingName=#{mappingName}
+	</select>
+	
+	<select id="queryObjectListIdsByProjectId" resultType="Integer" parameterType="Integer">
+		SELECT tableId FROM ac_table WHERE projectId=#{projectId}
+	</select>
+	
+	<select id="queryTableSelectByProjectId" resultType="Table" parameterType="Integer">
+		SELECT * FROM ac_table WHERE projectId=#{projectId}
+	</select>
+	
+	<select id="queryObjectListForConvertError" resultType="Table" parameterType="Map">
+		SELECT * FROM ac_table WHERE projectId=#{projectId} AND (tableTitle=#{errorName} or tableName=#{errorName} )
+	</select>
+</mapper>

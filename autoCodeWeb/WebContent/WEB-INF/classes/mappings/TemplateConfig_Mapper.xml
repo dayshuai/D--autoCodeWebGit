@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.autocode.mapper.TemplateConfigMapper">
+	<sql id="columns">
+		templateConfigId,configType,templateId,configName,configValue,isAssignPath,savePath,produceName
+	</sql>
+	
+	<insert id="insert" parameterType="TemplateConfig"  useGeneratedKeys="true" keyProperty="templateConfigId">
+		INSERT INTO ac_templateconfig (templateId,configType,configName,configValue,isAssignPath,savePath,produceName)
+		VALUES ( #{templateId},#{configType},#{configName},#{configValue},#{isAssignPath},#{savePath},#{produceName} )
+	</insert>
+
+	<update id="update" parameterType="TemplateConfig">
+		UPDATE ac_templateconfig
+ 		SET templateId=#{templateId},configType=#{configType},configName=#{configName},configValue=#{configValue},isAssignPath=#{isAssignPath},savePath=#{savePath},produceName=#{produceName}
+		WHERE templateConfigId = #{templateConfigId}
+	</update>
+
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM ac_templateconfig WHERE templateConfigId = #{templateConfigId}
+	</delete>
+
+	<delete id="deleteObjectByTemplateId" parameterType="Integer">
+		DELETE FROM ac_templateconfig WHERE templateId = #{templateId}
+	</delete>
+
+	<select id="queryObjectCount" resultType="Integer" parameterType="TemplateConfig">
+		SELECT COUNT(1) FROM ac_templateconfig WHERE templateId=#{templateId} 
+		<if test="searchValue!=null and searchValue!=''">
+			 AND (configName like '%${configName}%' or configValue like '%${configValue}%')
+		</if>
+	</select>
+
+	<select id="queryObjectList" resultType="TemplateConfig" parameterType="TemplateConfig">
+		SELECT
+		tc.*,t.templateName
+		FROM ac_templateconfig tc,ac_template t WHERE tc.templateId=t.templateId and tc.templateId=#{templateId} 
+		<if test="searchValue!=null and searchValue!=''">
+			 AND (configName like '%${configName}%' or configValue like '%${configValue}%')
+		</if>
+		ORDER BY configName
+		LIMIT ${pageStart},${pageSize}
+	</select>
+
+	<select id="querySingleObject" resultType="TemplateConfig" parameterType="Integer">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_templateconfig 
+		WHERE templateConfigId = #{templateConfigId}
+	</select>
+
+	<select id="queryObjectSelect" resultType="TemplateConfig" parameterType="TemplateConfig">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_templateconfig 
+	</select>
+	
+	<select id="queryObjectListForColumnName" resultType="TemplateConfig" parameterType="Map">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_templateconfig WHERE ${columnName}=#{columnValue}
+	</select>
+	
+	
+	<select id="queryObjectListForRepeat" resultType="TemplateConfig" parameterType="Map">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_templateconfig WHERE templateId=${templateId} and configName=#{configName} and configValue=#{configValue} and configType=#{configType}
+	</select>
+	
+	<select id="templateConfigSelectByTemplateId" resultType="TemplateConfig" parameterType="Integer">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_templateconfig 
+		WHERE templateId = #{value} and configType='DYNAMIC'
+	</select>
+</mapper>

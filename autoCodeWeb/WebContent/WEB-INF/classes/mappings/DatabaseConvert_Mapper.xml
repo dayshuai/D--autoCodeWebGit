@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.autocode.mapper.DatabaseConvertMapper">
+	<sql id="columns">
+		databaseConvertId,columnType,convertType,databaseType
+	</sql>
+	
+	<insert id="insert" parameterType="DatabaseConvert"  useGeneratedKeys="true" keyProperty="databaseConvertId">
+		INSERT INTO ac_databaseconvert (columnType,convertType,databaseType)
+		VALUES ( #{columnType},#{convertType},#{databaseType} )
+	</insert>
+
+	<update id="update" parameterType="DatabaseConvert">
+		UPDATE ac_databaseconvert
+ 		SET columnType=#{columnType},convertType=#{convertType},databaseType=#{databaseType}
+		WHERE databaseConvertId = #{databaseConvertId}
+	</update>
+
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM ac_databaseconvert WHERE databaseConvertId = #{databaseConvertId}
+	</delete>
+
+	<select id="queryObjectCount" resultType="Integer" parameterType="DatabaseConvert">
+		SELECT COUNT(1) FROM ac_databaseconvert 
+		<where>
+			<if test="searchColumn!=null and searchColumn!='' and searchValue!=null and searchValue!=''">
+				${searchColumn} like '%${searchValue}%'
+			</if>
+			<if test="(searchColumn==null || searchColumn=='') and searchValue!=null and searchValue!=''">
+				columnType like '%${searchValue}%' OR convertType like '%${searchValue}%' OR databaseType like '%${searchValue}%'
+			</if>
+		</where>
+	</select>
+
+	<select id="queryObjectList" resultType="DatabaseConvert" parameterType="DatabaseConvert">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_databaseconvert 
+		<where>
+			<if test="searchColumn!=null and searchColumn!='' and searchValue!=null and searchValue!=''">
+				${searchColumn} like '%${searchValue}%'
+			</if>
+			<if test="(searchColumn==null || searchColumn=='') and searchValue!=null and searchValue!=''">
+				columnType like '%${searchValue}%' OR convertType like '%${searchValue}%' OR databaseType like '%${searchValue}%'
+			</if>
+		</where>
+		<if test="sortColumn!=null and sortColumn!=''">
+			ORDER BY ${sortColumn}
+		</if>
+		<if test="sortColumn==null||sortColumn==''">
+			ORDER BY databaseConvertId
+		</if>
+		LIMIT ${pageStart},${pageSize}
+	</select>
+
+	<select id="querySingleObject" resultType="DatabaseConvert" parameterType="Integer">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_databaseconvert 
+		WHERE databaseConvertId = #{databaseConvertId}
+	</select>
+
+	<select id="queryObjectListByColumns" resultType="DatabaseConvert" parameterType="DatabaseConvert">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_databaseconvert WHERE columnType=#{columnType} and convertType=#{convertType} and databaseType=#{databaseType}
+	</select>
+
+	<select id="queryObjectSelect" resultType="DatabaseConvert" parameterType="DatabaseConvert">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_databaseconvert 
+	</select>
+	
+	<select id="queryObjectListByDatabaseType" resultType="DatabaseConvert" parameterType="String">
+		SELECT * FROM ac_databaseconvert WHERE databaseType=#{value}
+	</select>
+</mapper>

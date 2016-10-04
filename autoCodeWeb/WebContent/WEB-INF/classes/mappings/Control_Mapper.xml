@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.autocode.mapper.ControlMapper">
+	<sql id="columns">
+		controlId,projectId,tableId,isInsertMethod,isUpdateMethod,isDeleteMethod,isQueryMethod,isSelectMethod
+	</sql>
+	
+	<insert id="insert" parameterType="Control"  useGeneratedKeys="true" keyProperty="controlId">
+		INSERT INTO ac_control (projectId,tableId,isInsertMethod,isUpdateMethod,isDeleteMethod,isQueryMethod,isSelectMethod)
+		VALUES ( #{projectId},#{tableId},#{isInsertMethod},#{isUpdateMethod},#{isDeleteMethod},#{isQueryMethod},#{isSelectMethod} )
+	</insert>
+
+	<update id="update" parameterType="Control">
+		UPDATE ac_control
+ 		SET projectId=#{projectId},tableId=#{tableId},isInsertMethod=#{isInsertMethod},isUpdateMethod=#{isUpdateMethod},isDeleteMethod=#{isDeleteMethod},isQueryMethod=#{isQueryMethod},isSelectMethod=#{isSelectMethod}
+		WHERE controlId = #{controlId}
+	</update>
+
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM ac_control WHERE controlId = #{controlId}
+	</delete>
+	
+	<delete id="deleteObjectByProjectId" parameterType="Integer">
+		DELETE FROM ac_control WHERE projectId = #{projectId}
+	</delete>
+	
+	<delete id="deleteObjectByTableId" parameterType="Integer">
+		DELETE FROM ac_control WHERE tableId = #{tableId}
+	</delete>
+
+	<select id="queryObjectCount" resultType="Integer" parameterType="Control">
+		SELECT COUNT(1) 
+		FROM ac_control c,ac_table t,ac_project p
+		WHERE t.tableId=c.tableId and p.projectId=t.projectId and t.projectId=#{projectId}
+		<if test="searchValue!=null and searchValue!=''">
+			AND t.tableName like '%${searchValue}%'
+		</if>
+	</select>
+
+	<select id="queryObjectList" resultType="Control" parameterType="Control">
+		SELECT
+		c.*,p.projectName,t.tableName
+		FROM ac_control c,ac_table t,ac_project p
+		WHERE t.tableId=c.tableId and p.projectId=t.projectId and t.projectId=#{projectId}
+		<if test="searchValue!=null and searchValue!=''">
+			AND t.tableName like '%${searchValue}%'
+		</if>
+		ORDER BY controlId
+		LIMIT ${pageStart},${pageSize}
+	</select>
+
+	<select id="querySingleObject" resultType="Control" parameterType="Integer">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_control 
+		WHERE controlId = #{controlId}
+	</select>
+
+	<select id="queryObjectSelect" resultType="Control" parameterType="Control">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_control 
+	</select>
+	
+	<select id="queryObjectListForColumnName" resultType="Control" parameterType="Map">
+		SELECT
+		c.*,p.projectName,t.tableName
+		FROM ac_control c,ac_table t,ac_project p
+		WHERE t.tableId=c.tableId and p.projectId=t.projectId
+		and t.${columnName}=#{columnValue}
+	</select>
+</mapper>

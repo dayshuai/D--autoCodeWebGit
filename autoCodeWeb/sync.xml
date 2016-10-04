@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="GB2312"?>
+
+<syncs>
+    <sync configPropPath="" excludes="" target="F:/target" src="WebContent" type="common" includes=""/>
+</syncs>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.autocode.mapper.TemplateMapper">
+	<sql id="columns">
+		templateId,templateTitle,templateName,applyFrame,isValidation,imageUrl,memo
+	</sql>
+	
+	<insert id="insert" parameterType="Template"  useGeneratedKeys="true" keyProperty="templateId">
+		INSERT INTO ac_template (templateTitle,templateName,applyFrame,isValidation,imageUrl,memo)
+		VALUES ( #{templateTitle},#{templateName},#{applyFrame},#{isValidation},#{imageUrl},#{memo} )
+	</insert>
+
+	<update id="update" parameterType="Template">
+		UPDATE ac_template
+ 		SET templateTitle=#{templateTitle},templateName=#{templateName},applyFrame=#{applyFrame},isValidation=#{isValidation},imageUrl=#{imageUrl},memo=#{memo}
+		WHERE templateId = #{templateId}
+	</update>
+
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM ac_template WHERE templateId = #{templateId}
+	</delete>
+
+	<select id="queryObjectCount" resultType="Integer" parameterType="Template">
+		SELECT COUNT(1) FROM ac_template 
+		<where>
+			<if test="searchColumn!=null and searchColumn!='' and searchValue!=null and searchValue!=''">
+				 AND ${searchColumn}=#{searchValue}
+			</if>
+			<if test="(searchColumn==null || searchColumn=='') and searchValue!=null and searchValue!=''">
+			<!-- columnName like '%${searchValue}%' OR convertName like '%${searchValue}%'-->
+			</if>
+		</where>
+	</select>
+
+	<select id="queryObjectList" resultType="Template" parameterType="Template">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_template 
+		<where>
+			<if test="searchColumn!=null and searchColumn!='' and searchValue!=null and searchValue!=''">
+				 AND ${searchColumn}=#{searchValue}
+			</if>
+			<if test="(searchColumn==null || searchColumn=='') and searchValue!=null and searchValue!=''">
+			<!-- columnName like '%${searchValue}%' OR convertName like '%${searchValue}%'-->
+			</if>
+		</where>
+		<if test="sortColumn!=null and sortColumn!=''">
+			ORDER BY ${sortColumn}
+		</if>
+		<if test="sortColumn==null||sortColumn==''">
+			ORDER BY templateId
+		</if>
+		LIMIT ${pageStart},${pageSize}
+	</select>
+
+	<select id="querySingleObject" resultType="Template" parameterType="Integer">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_template 
+		WHERE templateId = #{templateId}
+	</select>
+
+	<select id="queryObjectSelect" resultType="Template" parameterType="Template">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_template
+	</select>
+	
+	<select id="queryObjectListForColumnName" resultType="Template" parameterType="Map">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_template WHERE ${columnName}=#{columnValue}
+	</select>
+</mapper>

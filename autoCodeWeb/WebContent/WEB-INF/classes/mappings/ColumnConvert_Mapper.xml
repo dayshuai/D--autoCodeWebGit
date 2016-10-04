@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.autocode.mapper.ColumnConvertMapper">
+	<sql id="columns">
+		columnConvertId,mappingName,columnName,columnZhName
+	</sql>
+	
+	<insert id="insert" parameterType="ColumnConvert"  useGeneratedKeys="true" keyProperty="columnConvertId">
+		INSERT INTO ac_columnConvert (mappingName,columnName,columnZhName)
+		VALUES ( #{mappingName},#{columnName},#{columnZhName} )
+	</insert>
+
+	<update id="update" parameterType="ColumnConvert">
+		UPDATE ac_columnConvert
+ 		SET mappingName=#{mappingName},columnName=#{columnName},columnZhName=#{columnZhName}
+		WHERE columnConvertId = #{columnConvertId}
+	</update>
+
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM ac_columnConvert WHERE columnConvertId = #{columnConvertId}
+	</delete>
+
+	<select id="queryObjectCount" resultType="Integer" parameterType="ColumnConvert">
+		SELECT COUNT(1) FROM ac_columnConvert 
+		<where>
+			<if test="searchColumn!=null and searchColumn!='' and searchValue!=null and searchValue!=''">
+				 ${searchColumn} like '%${searchValue}%'
+			</if>
+			<if test="(searchColumn==null || searchColumn=='') and searchValue!=null and searchValue!=''">
+			columnName like '%${searchValue}%' OR columnZhName like '%${searchValue}%'
+			</if>
+		</where>
+	</select>
+
+	<select id="queryObjectList" resultType="ColumnConvert" parameterType="ColumnConvert">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_columnConvert 
+		<where>
+			<if test="searchColumn!=null and searchColumn!='' and searchValue!=null and searchValue!=''">
+				 ${searchColumn} like '%${searchValue}%'
+			</if>
+			<if test="(searchColumn==null || searchColumn=='') and searchValue!=null and searchValue!=''">
+			columnName like '%${searchValue}%' OR columnZhName like '%${searchValue}%'
+			</if>
+		</where>
+		<if test="sortColumn!=null and sortColumn!=''">
+			ORDER BY ${sortColumn}
+		</if>
+		<if test="sortColumn==null||sortColumn==''">
+			ORDER BY columnConvertId
+		</if>
+		LIMIT ${pageStart},${pageSize}
+	</select>
+
+	<select id="querySingleObject" resultType="ColumnConvert" parameterType="Integer">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_columnConvert 
+		WHERE columnConvertId = #{columnConvertId}
+	</select>
+
+	<select id="queryObjectSelect" resultType="ColumnConvert" parameterType="ColumnConvert">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_columnConvert 
+	</select>
+	
+	<select id="queryObjectListForColumnName" resultType="ColumnConvert" parameterType="Map">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_columnConvert WHERE ${columnName}=#{columnValue}
+	</select>
+	
+	<select id="queryObjectListForRepeat" resultType="ColumnConvert">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_columnconvert 
+		WHERE mappingName in (select mappingName from ac_columnconvert group by mappingName having count(mappingName) > 1)
+	</select>
+	
+</mapper>

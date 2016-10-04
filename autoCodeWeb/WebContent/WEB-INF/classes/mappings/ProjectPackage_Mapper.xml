@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.autocode.mapper.ProjectPackageMapper">
+	<sql id="columns">
+		projectPackageId,projectId,packageName,packagePath,memo
+	</sql>
+	
+	<insert id="insert" parameterType="ProjectPackage"  useGeneratedKeys="true" keyProperty="projectPackageId">
+		INSERT INTO ac_projectpackage (projectId,packageName,packagePath,memo)
+		VALUES ( #{projectId},#{packageName},#{packagePath},#{memo} )
+	</insert>
+
+	<update id="update" parameterType="ProjectPackage">
+		UPDATE ac_projectpackage
+ 		SET projectId=#{projectId},packageName=#{packageName},packagePath=#{packagePath},memo=#{memo}
+		WHERE projectPackageId = #{projectPackageId}
+	</update>
+
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM ac_projectpackage WHERE projectPackageId = #{projectPackageId}
+	</delete>
+	
+	<delete id="deleteObjectByProjectId" parameterType="Integer">
+		DELETE FROM ac_projectpackage WHERE projectId = #{projectId}
+	</delete>
+
+	<select id="queryObjectCount" resultType="Integer" parameterType="ProjectPackage">
+		SELECT COUNT(1) FROM ac_projectpackage 
+		<where>
+			projectId=#{projectId}
+			<if test="searchColumn!=null and searchColumn!='' and searchValue!=null and searchValue!=''">
+				 ${searchColumn} like '%${searchValue}%'
+			</if>
+			<if test="(searchColumn==null || searchColumn=='') and searchValue!=null and searchValue!=''">
+				columnName like '%${searchValue}%' OR convertName like '%${searchValue}%'
+			</if>
+		</where>
+	</select>
+
+	<select id="queryObjectList" resultType="ProjectPackage" parameterType="ProjectPackage">
+		SELECT
+		pp.projectPackageId,pp.projectId,pp.packageName,pp.packagePath,pp.memo,p.projectName
+		FROM ac_projectpackage pp inner join ac_project p on p.projectId=pp.projectId 
+		<where>
+			pp.projectId=#{projectId}
+			<if test="searchColumn!=null and searchColumn!='' and searchValue!=null and searchValue!=''">
+				 ${searchColumn} like '%${searchValue}%'
+			</if>
+			<if test="(searchColumn==null || searchColumn=='') and searchValue!=null and searchValue!=''">
+				columnName like '%${searchValue}%' OR convertName like '%${searchValue}%'
+			</if>
+		</where>
+		<if test="sortColumn!=null and sortColumn!=''">
+			ORDER BY ${sortColumn}
+		</if>
+		<if test="sortColumn==null||sortColumn==''">
+			ORDER BY projectPackageId
+		</if>
+		LIMIT ${pageStart},${pageSize}
+	</select>
+
+	<select id="querySingleObject" resultType="ProjectPackage" parameterType="Integer">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_projectpackage 
+		WHERE projectPackageId = #{projectPackageId}
+	</select>
+
+	<select id="queryObjectSelect" resultType="ProjectPackage" parameterType="ProjectPackage">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_projectpackage 
+	</select>
+	
+	<select id="queryObjectListForColumnName" resultType="ProjectPackage" parameterType="Map">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_projectpackage WHERE ${columnName}=#{columnValue}
+	</select>
+</mapper>
