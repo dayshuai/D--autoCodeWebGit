@@ -38,6 +38,7 @@ public class ProduceRun extends Thread {
 	private Integer writeCount = Integer.valueOf(0);
 	private String fileName;
 	private String fileType;
+	private String fileWritePath;
 	private Map<String, Object> contentMap = new HashMap<String, Object>();
 
 	public ProduceRun(Project project, ProduceService produceService, List<ProjectPackage> projectPackageList,
@@ -112,15 +113,13 @@ public class ProduceRun extends Thread {
 				this.fileName = templateConfig.getProduceName();
 				this.contentMap.put("className", getClassName(this.fileName));
 				if (templateConfig.getIsAssignPath().equals("YES")) {
-					bool = writeFile(assignPath + "\\" + templateConfig.getSavePath(), templateConfig.getConfigValue(),
-							this.contentMap);
-					if (bool)
-						;
+					fileWritePath = assignPath + "\\" + templateConfig.getSavePath();
 				} else {
-					bool = writeFile(classPath + "\\" + getPackagePath(templateConfig.getConfigName()),
-							templateConfig.getConfigValue(), this.contentMap);
-					if (bool)
-						;
+					fileWritePath = classPath + "\\" + getPackagePath(templateConfig.getConfigName());
+				}
+				bool = writeFile(fileWritePath, templateConfig.getConfigValue(), this.contentMap);
+				if (!bool) {
+					return;
 				}
 				// 动态
 			} else if (templateConfig.getConfigType().equals("DYNAMIC")) {
