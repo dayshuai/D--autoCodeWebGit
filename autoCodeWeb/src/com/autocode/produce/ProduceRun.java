@@ -38,12 +38,12 @@ public class ProduceRun extends Thread {
 	private Integer writeCount = Integer.valueOf(0);
 	private String fileName;
 	private String fileType;
-	private Map<String, Object> contentMap = new HashMap();
+	private Map<String, Object> contentMap = new HashMap<String, Object>();
 
 	public ProduceRun(Project project, ProduceService produceService, List<ProjectPackage> projectPackageList,
-			List<Table> tableList, List<Control> controlList, 
-			List<PackageConvert> packageConvertList, List<TemplateConfig> templateConfigList, boolean isOpenFile,
-			int produceCount, String templatePath, String writePath, String produceType) {
+			List<Table> tableList, List<Control> controlList, List<PackageConvert> packageConvertList,
+			List<TemplateConfig> templateConfigList, boolean isOpenFile, int produceCount, String templatePath,
+			String writePath, String produceType) {
 		this.project = project;
 		this.projectPackageList = projectPackageList;
 		this.tableList = tableList;
@@ -61,12 +61,12 @@ public class ProduceRun extends Thread {
 	}
 
 	private void initPrepare() {
-		for (int j = 0; j < this.tableList.size(); j++) {
-			Table table = (Table) this.tableList.get(j);
-			for (int k = 0; k < table.getColumnList().size(); k++) {
-				Column localColumn = (Column) table.getColumnList().get(k);
-			}
-		}
+		/*
+		 * for (int j = 0; j < this.tableList.size(); j++) { Table table =
+		 * this.tableList.get(j); for (int k = 0; k <
+		 * table.getColumnList().size(); k++) { Column localColumn =
+		 * table.getColumnList().get(k); } }
+		 */
 
 		this.contentMap.put("tableList", this.tableList);
 
@@ -107,6 +107,7 @@ public class ProduceRun extends Thread {
 		for (int i = 0; i < this.templateConfigList.size(); i++) {
 			TemplateConfig templateConfig = (TemplateConfig) this.templateConfigList.get(i);
 			this.fileType = templateConfig.getConfigName();
+			// 静态
 			if (templateConfig.getConfigType().equals("STATIC")) {
 				this.fileName = templateConfig.getProduceName();
 				this.contentMap.put("className", getClassName(this.fileName));
@@ -121,6 +122,7 @@ public class ProduceRun extends Thread {
 					if (bool)
 						;
 				}
+				// 动态
 			} else if (templateConfig.getConfigType().equals("DYNAMIC")) {
 				if (templateConfig.getIsAssignPath().equals("YES")) {
 					if ((templateConfig.getConfigName().equals("Controller"))
@@ -222,15 +224,15 @@ public class ProduceRun extends Thread {
 			if (this.produceCount.equals(this.writeCount)) {
 				Date endDate = new Date();
 				Produce produce = null;
-				if (this.produceType.equals("projectProduce"))
+				if (this.produceType.equals("projectProduce")) {
 					produce = new Produce(this.project.getProjectTitle(), this.project.getProjectName(),
 							Integer.valueOf(this.tableList.size()), this.produceCount,
 							endDate.getTime() - startDate.getTime() + "毫秒", new Date(), "项目生成");
-				else if (this.produceType.equals("classProduce"))
+				} else if (this.produceType.equals("classProduce")) {
 					produce = new Produce(this.project.getProjectTitle(), this.project.getProjectName(),
 							Integer.valueOf(this.tableList.size()), this.produceCount,
 							endDate.getTime() - startDate.getTime() + "毫秒", new Date(), "类别生成");
-				else {
+				} else {
 					produce = new Produce(this.project.getProjectTitle(), this.project.getProjectName(),
 							Integer.valueOf(1), this.produceCount, endDate.getTime() - startDate.getTime() + "毫秒",
 							new Date(), "单表生成");
@@ -253,7 +255,7 @@ public class ProduceRun extends Thread {
 			this.contentMap.remove("databasePrimary");
 			this.contentMap.remove("showColumnName");
 
-			List columnList = table.getColumnList();
+			List<Column> columnList = table.getColumnList();
 			for (int i = 0; i < columnList.size(); i++) {
 				Column column = (Column) columnList.get(i);
 				if (column.getIsPrimary().equals("YES")) {
@@ -285,8 +287,9 @@ public class ProduceRun extends Thread {
 					}
 				}
 			}
-			if (this.contentMap.get("showColumnName") == null)
+			if (this.contentMap.get("showColumnName") == null) {
 				this.contentMap.put("showColumnName", this.contentMap.get("javaPrimary"));
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

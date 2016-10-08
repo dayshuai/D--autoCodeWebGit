@@ -4,6 +4,10 @@ import com.autocode.base.BaseBean;
 import java.io.Serializable;
 
 public class PackageConvert extends BaseBean implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Integer packageConvertId;
 	private String className;
 	private String packageName;

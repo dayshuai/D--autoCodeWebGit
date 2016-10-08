@@ -34,6 +34,7 @@ import com.autocode.bean.Control;
 import com.autocode.bean.PackageConvert;
 import com.autocode.bean.Produce;
 import com.autocode.bean.Project;
+import com.autocode.bean.ProjectPackage;
 import com.autocode.bean.Table;
 import com.autocode.bean.TemplateConfig;
 import com.autocode.produce.ProduceFileUtil;
@@ -146,7 +147,7 @@ public class ProduceController extends BaseController {
 			if (!project.getProjectFrame().equals(template.getApplyFrame())) {
 				return resultFalse("项目框架不匹配该模板,不能用在该项目上");
 			}
-			List templateConfigList = this.templateConfigService.queryTemplateConfigListForColumnName("templateId",
+			List <TemplateConfig> templateConfigList = this.templateConfigService.queryTemplateConfigListForColumnName("templateId",
 					templateId);
 			if ((templateConfigList == null) || (templateConfigList.size() == 0)) {
 				return resultFalse(template.getTemplateName() + "模板下没有配置信息,请配置。");
@@ -267,7 +268,7 @@ public class ProduceController extends BaseController {
 			if ((config != null) && (StringUtils.equals("YES", config.getConfigValue()))) {
 				isOpenFile = true;
 			}
-			List templateConfigList = this.templateConfigService.queryTemplateConfigListForColumnName("templateId",
+			List <TemplateConfig> templateConfigList = this.templateConfigService.queryTemplateConfigListForColumnName("templateId",
 					templateId);
 			if ((templateConfigList == null) || (templateConfigList.size() == 0)) {
 				return resultFalse(template.getTemplateName() + "模板下没有配置信息,请配置。");
@@ -294,11 +295,11 @@ public class ProduceController extends BaseController {
 			} else {
 				return resultFalse(template.getTemplateName() + "模板,没有导入模板文件。");
 			}
-			List tableList = this.tableService.queryTableListByProjectId(projectId);
+			List <Table> tableList = this.tableService.queryTableListByProjectId(projectId);
 			if ((tableList == null) || (tableList.size() == 0)) {
 				return resultFalse(project.getProjectName() + "项目下没有表,不能生成。");
 			}
-			List controlList = this.controlService.queryControlListByProjectId(projectId);
+			List <Control> controlList = this.controlService.queryControlListByProjectId(projectId);
 			if ((controlList == null) || (controlList.size() == 0)) {
 				return resultFalse(project.getProjectName() + "项目下没有控制器类,不能生成。");
 			}
@@ -317,8 +318,8 @@ public class ProduceController extends BaseController {
 				}
 			}
 
-			List packageConvertList = this.packageConvertService.queryPackageConvertSelect();
-			Map packageMap = new HashMap();
+			List <PackageConvert> packageConvertList = this.packageConvertService.queryPackageConvertSelect();
+			Map <String, String> packageMap = new HashMap <String, String> ();
 			if ((packageConvertList != null) && (packageConvertList.size() > 0)) {
 				for (int i = 0; i < packageConvertList.size(); i++) {
 					PackageConvert pc = (PackageConvert) packageConvertList.get(i);
@@ -326,10 +327,10 @@ public class ProduceController extends BaseController {
 				}
 			}
 			for (int i = 0; i < tableList.size(); i++) {
-				Table table = (Table) tableList.get(i);
-				List columnList = this.columnService.queryColumnListByTableId(table.getTableId());
+				Table table = tableList.get(i);
+				List <Column> columnList = this.columnService.queryColumnListByTableId(table.getTableId());
 				for (int j = 0; j < columnList.size(); j++) {
-					Column column = (Column) columnList.get(j);
+					Column column = columnList.get(j);
 					if ((column.getIsImportPackage().equals("YES")) && (packageMap.size() > 0)) {
 						String importPackageName = (String) packageMap.get(column.getColumnType());
 						if (importPackageName == null)
@@ -343,7 +344,7 @@ public class ProduceController extends BaseController {
 			}
 			String writePath = request.getSession().getServletContext().getRealPath("produceFiles/projectProduce");
 			ProduceFileUtil.deleteFile(writePath, project.getProjectName());
-			List projectPackageList = this.projectPackageService.queryProjectPackageListByProjectId(projectId);
+			List <ProjectPackage> projectPackageList = this.projectPackageService.queryProjectPackageListByProjectId(projectId);
 			try {
 				this.taskExecutor.execute(new ProduceRun(project, this.produceService, projectPackageList, tableList,
 						controlList, packageConvertList, templateConfigList, isOpenFile, produceCount,
