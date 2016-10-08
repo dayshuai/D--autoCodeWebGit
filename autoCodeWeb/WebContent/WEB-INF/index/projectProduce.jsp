@@ -294,7 +294,7 @@
 								<button type="button" id="searchBtn" class="btn btn-primary">
 									<i class="glyphicon glyphicon-search"></i>查询项目信息
 								</button>
-								<button class="btn btn-danger" onclick="disposeError()">
+								<!-- <button class="btn btn-danger" onclick="disposeError()">
 									<i class="glyphicon glyphicon-refresh"></i>处理Error:0
 								</button>
 								<a href="download/sshBase.html" target="_blank" class="btn btn-info">
@@ -302,7 +302,7 @@
 								</a>
 								<a href="download/smBase.html" target="_blank" class="btn btn-info">
 									<i class="glyphicon glyphicon-download"></i>下载SM基础文件
-								</a>
+								</a> -->
 							</div>
 						</div>
 					</div>

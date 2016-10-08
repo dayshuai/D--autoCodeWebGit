@@ -63,7 +63,7 @@ public class ProduceFileUtil {
 	}
 
 	public static Map<String, Object> ReadState(String readUrl, String projectName) {
-		Map map = new HashMap();
+		Map <String, Object> map = new HashMap <String, Object> ();
 		map.put("fileName", "");
 		map.put("fileType", "");
 		map.put("writeCount", "0");
@@ -82,8 +82,7 @@ public class ProduceFileUtil {
 				if (timeCount * 300 > 10000) {
 					map.put("result", "false");
 					map.put("reason", "读取进度异常");
-					Map localMap1 = map;
-					return localMap1;
+					return map;
 				}
 				timeCount++;
 			}

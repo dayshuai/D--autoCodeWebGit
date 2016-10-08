@@ -227,7 +227,7 @@ public class ProduceRun extends Thread {
 					produce = new Produce(this.project.getProjectTitle(), this.project.getProjectName(),
 							Integer.valueOf(this.tableList.size()), this.produceCount,
 							endDate.getTime() - startDate.getTime() + "毫秒", new Date(), "项目生成");
-				} else if (this.produceType.equals("classProduce")) {
+				} /*else if (this.produceType.equals("classProduce")) {
 					produce = new Produce(this.project.getProjectTitle(), this.project.getProjectName(),
 							Integer.valueOf(this.tableList.size()), this.produceCount,
 							endDate.getTime() - startDate.getTime() + "毫秒", new Date(), "类别生成");
@@ -235,7 +235,7 @@ public class ProduceRun extends Thread {
 					produce = new Produce(this.project.getProjectTitle(), this.project.getProjectName(),
 							Integer.valueOf(1), this.produceCount, endDate.getTime() - startDate.getTime() + "毫秒",
 							new Date(), "单表生成");
-				}
+				}*/
 				this.produceService.insertProduce(produce);
 			}
 			if ((this.isOpenFile) && (this.produceCount.equals(this.writeCount)))

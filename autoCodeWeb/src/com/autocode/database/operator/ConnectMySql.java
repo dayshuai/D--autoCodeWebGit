@@ -64,14 +64,14 @@ public class ConnectMySql {
 					if (mappingName.contains("_"))
 						tableName = handleColumnLetter(mappingName, "table");
 					else {
-						tableName = "Error:0";
+						tableName = "null";
 					}
 				}
 				if ((tableZhName == null) || (tableZhName.equals(""))) {
 					tableZhName = (String) translateMap.get(mappingName.toLowerCase());
 				}
 				if ((tableZhName == null) || (tableZhName.equals(""))) {
-					tableZhName = "Error:0";
+					tableZhName = "null";
 				}
 				Table t = new Table(p.getProjectId(), tableZhName, mappingName, tableName, "NO", "自动生成");
 				t.setColumnList(columnList);
@@ -167,7 +167,7 @@ public class ConnectMySql {
 						}
 					}
 					if (bool) {
-						coumnName = "Error:0";
+						coumnName = "null";
 					}
 				}
 				if ((columnZhName == null) || (columnZhName.equals(""))) {
@@ -175,7 +175,7 @@ public class ConnectMySql {
 					if ((comment != null) && (!comment.equals("")))
 						columnZhName = comment;
 					else {
-						columnZhName = "Error:0";
+						columnZhName = "null";
 					}
 				}
 				c.setMappingName(mappingName);
@@ -266,7 +266,7 @@ public class ConnectMySql {
 						}
 					}
 					if (bool) {
-						coumnName = "Error:0";
+						coumnName = "null";
 					}
 				}
 				if (((columnZhName == null) || (columnZhName.equals("")))
@@ -275,7 +275,7 @@ public class ConnectMySql {
 					if ((comment != null) && (!comment.equals("")))
 						columnZhName = comment;
 					else {
-						columnZhName = "Error:0";
+						columnZhName = "null";
 					}
 				}
 

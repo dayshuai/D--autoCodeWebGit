@@ -6,7 +6,8 @@
 %>
 	<div class="menus">
 		<div class="logo">
-			<a href="#" hidefocus="true" id="met_logo"><img src="images/230x83.png" style="width:225px;height:100%;"></a>
+		<!--  <a href="#" hidefocus="true" id="met_logo"><img src="images/230x83.png" style="width:225px;height:100%;"></a>
+		-->
 		</div>       
 		<div class="menuNav" >
 		  <ul id="topnav">
@@ -39,9 +40,9 @@
 			</ul>
 			<ul id="detail_5" style="<c:if test='${empty nav_5}'>display:none</c:if>">
 				<li><a href="produce/projectProduce.html" class="${oneKeyProduce}">项目生成</a></li>
-				<li><a href="produce/classProduce.html" class="${classProduce}">类别生成</a></li>
+				<!-- <li><a href="produce/classProduce.html" class="${classProduce}">类别生成</a></li>
 				<li><a href="produce/tableProduce.html" class="${tableProduce}">单表生成</a></li>
-				<li><a href="produce.html" class="${produce}">生成记录</a></li>
+				<li><a href="produce.html" class="${produce}">生成记录</a></li> -->
 			</ul>
 		</div>
 	</div>
