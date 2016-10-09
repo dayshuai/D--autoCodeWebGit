@@ -44,7 +44,7 @@
 			requestUrl={
 				'append':'packageConfig/insertPackageConfig.html',
 				'update':'packageConfig/updatePackageConfig.html',
-				'delete':'packageConfig/deletePackageConfig.html',
+				'deleteUrl':'packageConfig/deletePackageConfig.html',
 				'deletes':'packageConfig/deletePackageConfigs.html',
 				'query':'packageConfig/queryPackageConfigList.html'
 			}

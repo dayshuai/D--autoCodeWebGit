@@ -44,7 +44,7 @@
 			requestUrl={
 				'append':'databaseConvert/insertDatabaseConvert.html',
 				'update':'databaseConvert/updateDatabaseConvert.html',
-				'delete':'databaseConvert/deleteDatabaseConvert.html',
+				'deleteUrl':'databaseConvert/deleteDatabaseConvert.html',
 				'deletes':'databaseConvert/deleteDatabaseConverts.html',
 				'query':'databaseConvert/queryDatabaseConvertList.html'
 			}

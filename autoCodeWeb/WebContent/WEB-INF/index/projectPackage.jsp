@@ -44,7 +44,7 @@
 			requestUrl={
 				'append':'projectPackage/insertProjectPackage.html',
 				'update':'projectPackage/updateProjectPackage.html',
-				'delete':'projectPackage/deleteProjectPackage.html',
+				'deleteUrl':'projectPackage/deleteProjectPackage.html',
 				'deletes':'projectPackage/deleteProjectPackages.html',
 				'query':'projectPackage/queryProjectPackageList.html'
 			}

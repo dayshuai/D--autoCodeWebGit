@@ -44,7 +44,7 @@
 			requestUrl={
 				'append':'config/insertConfig.html',
 				'update':'config/updateConfig.html',
-				'delete':'config/deleteConfig.html',
+				'deleteUrl':'config/deleteConfig.html',
 				'deletes':'config/deleteConfigs.html',
 				'query':'config/queryConfigList.html'
 			}

@@ -44,7 +44,7 @@
 			requestUrl={
 				'append':'control/insertControl.html',
 				'update':'control/updateControl.html',
-				'delete':'control/deleteControl.html',
+				'deleteUrl':'control/deleteControl.html',
 				'deletes':'control/deleteControls.html',
 				'query':'control/queryControlList.html'
 			}

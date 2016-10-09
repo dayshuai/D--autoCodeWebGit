@@ -363,8 +363,9 @@ public class ConnectMySql {
 			String[] strs = str.split("_");
 			if (flag.equals("table")) {
 				rs = String.valueOf(strs[0].charAt(0)).toUpperCase() + strs[0].substring(1, strs[0].length());
-				for (int i = 1; i < strs.length; i++)
+				for (int i = 1; i < strs.length; i++) {
 					rs = rs + String.valueOf(strs[i].charAt(0)).toUpperCase() + strs[i].substring(1, strs[i].length());
+				}
 			} else {
 				rs = String.valueOf(strs[0].charAt(0)).toLowerCase() + strs[0].substring(1, strs[0].length());
 				for (int i = 1; i < strs.length; i++) {

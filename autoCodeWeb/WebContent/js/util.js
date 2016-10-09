@@ -240,7 +240,7 @@ function remove(){
 		bootbox.confirm("确认删除所选记录？", function(result) {
 			if (result) {
 				$.ajax({
-					url : requestUrl.delete,
+					url : requestUrl.deleteUrl,
 					data:{
 						'id':id,
 						"a":Math.random()

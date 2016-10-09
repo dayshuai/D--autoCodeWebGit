@@ -45,7 +45,7 @@
 				'append':'templateConfig/insertTemplateConfig.html',
 				'update':'templateConfig/updateTemplateConfig.html',
 				'updateTemplateConfig':'templateConfig/updateTemplateConfig.html',
-				'delete':'templateConfig/deleteTemplateConfig.html',
+				'deleteUrl':'templateConfig/deleteTemplateConfig.html',
 				'deletes':'templateConfig/deleteTemplateConfigs.html',
 				'query':'templateConfig/queryTemplateConfigList.html'
 			}

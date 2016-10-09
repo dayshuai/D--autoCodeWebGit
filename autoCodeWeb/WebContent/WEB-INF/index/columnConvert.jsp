@@ -44,7 +44,7 @@
 			requestUrl={
 				'append':'columnConvert/insertColumnConvert.html',
 				'update':'columnConvert/updateColumnConvert.html',
-				'delete':'columnConvert/deleteColumnConvert.html',
+				'deleteUrl':'columnConvert/deleteColumnConvert.html',
 				'deletes':'columnConvert/deleteColumnConverts.html',
 				'query':'columnConvert/queryColumnConvertList.html'
 			}

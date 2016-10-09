@@ -44,7 +44,7 @@
 			requestUrl={
 				'append':'produce/insertProduce.html',
 				'update':'produce/updateProduce.html',
-				'delete':'produce/deleteProduce.html',
+				'deleteUrl':'produce/deleteProduce.html',
 				'deletes':'produce/deleteProduces.html',
 				'query':'produce/queryProduceList.html'
 			}

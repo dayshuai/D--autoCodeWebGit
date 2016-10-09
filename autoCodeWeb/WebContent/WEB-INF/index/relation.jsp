@@ -44,7 +44,7 @@
 			requestUrl={
 				'append':'relation/insertRelation.html',
 				'update':'relation/updateRelation.html',
-				'delete':'relation/deleteRelation.html',
+				'deleteUrl':'relation/deleteRelation.html',
 				'deletes':'relation/deleteRelations.html',
 				'query':'relation/queryRelationList.html'
 			}

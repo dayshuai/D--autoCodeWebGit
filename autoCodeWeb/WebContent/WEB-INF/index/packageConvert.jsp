@@ -44,7 +44,7 @@
 			requestUrl={
 				'append':'packageConvert/insertPackageConvert.html',
 				'update':'packageConvert/updatePackageConvert.html',
-				'delete':'packageConvert/deletePackageConvert.html',
+				'deleteUrl':'packageConvert/deletePackageConvert.html',
 				'deletes':'packageConvert/deletePackageConverts.html',
 				'query':'packageConvert/queryPackageConvertList.html'
 			}

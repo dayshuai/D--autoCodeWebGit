@@ -43,7 +43,7 @@
 				requestUrl={
 					'append':'project/insertProject.html',
 					'update':'project/updateProject.html',
-					'delete':'project/deleteProject.html',
+					'deleteUrl':'project/deleteProject.html',
 					'deletes':'project/deleteProjects.html',
 					'query':'project/queryProjectList.html'
 				}

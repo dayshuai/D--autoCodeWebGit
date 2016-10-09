@@ -45,7 +45,7 @@
 			requestUrl={
 				'append':'template/insertTemplate.html',
 				'update':'template/updateTemplate.html',
-				'delete':'template/deleteTemplate.html',
+				'deleteUrl':'template/deleteTemplate.html',
 				'deletes':'template/deleteTemplates.html',
 				'query':'template/queryTemplateList.html'
 			}

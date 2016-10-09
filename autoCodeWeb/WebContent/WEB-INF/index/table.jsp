@@ -45,7 +45,7 @@
 			requestUrl={
 				'append':'table/insertTable.html',
 				'update':'table/updateTable.html',
-				'delete':'table/deleteTable.html',
+				'deleteUrl':'table/deleteTable.html',
 				'deletes':'table/deleteTables.html',
 				'query':'table/queryTableList.html'
 			}
@@ -129,6 +129,40 @@
 				$("#tableListModal").modal();
 			}
 			$("#appendModal").modal("hide");
+		}
+		
+		function oneKeyReplace(){
+			$("#replaceProjectId").val($("#searchProjectId").val());
+			$("#replaceModal").modal();
+			$('#replaceForm')[0].reset();
+		}
+		
+		function submitReplaceForm(){
+			var operatorUrl='projectPackage/replaceProjectPackage.html';
+			bootbox.confirm("确定要替换吗", function(result) {
+				if (result) {
+					$.ajax({
+						url:operatorUrl,
+						data:$('#replaceForm').serialize(),//form 序列化
+						dataType : "json",
+						type:'post',
+						cache : false,
+						async : false,
+						onsubmit: function(){
+							return true;
+						},
+						success:function(data){
+							if(data.result){
+								$("#replaceModal").modal("hide");
+								JumpPage(pageIndex);
+								showMessage(data.result,"操作成功");
+							}else{
+								bootbox.alert(data.message);
+							}
+						}
+					});
+				}
+			});
 		}
 
 		//添加
@@ -273,11 +307,13 @@
 				<div class="row">
 					<div class="col-xs-6">
 						<button class="btn btn-info" id="append"><i class="glyphicon glyphicon-file"></i>手动添加 </button>
-						<button class="btn btn-info" onclick="noopsycheAppend()"><i class="glyphicon glyphicon-refresh"></i>自定义数据库添加 </button>
+						<button class="btn btn-info" onclick="noopsycheAppend()"><i class="glyphicon glyphicon-refresh"></i>自定义添加 </button>
 						<button class="btn btn-info" onclick="onKeyAppend()"><i class="glyphicon glyphicon-cog"></i>全部添加</button>
 						<button class="btn btn-info" id="edit"><i class="glyphicon glyphicon-edit"></i>修 改 </button>
 						<button class="btn btn-info" id="removes"><i class="glyphicon glyphicon-trash"></i>删 除 </button>
 						<button class="btn btn-info" onclick="removePrefix()"><i class="glyphicon glyphicon-remove"></i>移除前缀 </button>
+						<button class="btn btn-info" onclick="oneKeyReplace()"><i class="glyphicon glyphicon-cog"></i>名称替换 </button>
+						
 					</div>
 				  	<div class="col-xs-5">
 					 	 <form id="searchForm" onsubmit="return false">
@@ -436,6 +472,56 @@
 						<div class="modal-footer">
 							<button type="button" class="btn btn-default" data-dismiss="modal">
 								关闭
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="modal fade" id="replaceModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+			<div class="modal-dialog" style="width:500px;">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+							&times;
+						</button>
+						<h4 class="modal-title" id="myModalLabel">
+							Bean名称替换表单
+						</h4>
+						<span id="error" class="label label-danger" style="display:none">
+						</span>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-xs-12">
+								<form id="replaceForm" method="post" onsubmit="return false;">
+									<input id="replaceProjectId" name="projectId" class="form-control" type="hidden">
+									<div class="form-group col-xs-12">
+										<label class="col-xs-3 control-label">
+											被替换值：
+										</label>
+										<div class="col-xs-7">
+											<input id="sourceName" name="sourceName" class="form-control" type="text">
+										</div>
+									</div>
+									<div class="form-group col-xs-12">
+										<label class="col-xs-3 control-label">
+											替换值：
+										</label>
+										<div class="col-xs-7">
+											<input id="replaceName" name="replaceName" class="form-control" type="text">
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">
+								关闭
+							</button>
+							<button type="button" class="btn btn-primary" onclick="submitReplaceForm()">
+								保存
 							</button>
 						</div>
 					</div>
