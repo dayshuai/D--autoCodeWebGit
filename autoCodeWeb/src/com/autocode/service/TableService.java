@@ -40,4 +40,6 @@ public abstract interface TableService {
 	public abstract List<Integer> queryTableListIdsByProjectId(Integer paramInteger);
 
 	public abstract void removePrefix(Integer paramInteger);
+
+	public abstract Integer replaceBean(Integer projectId, String sourceName, String replaceName);
 }

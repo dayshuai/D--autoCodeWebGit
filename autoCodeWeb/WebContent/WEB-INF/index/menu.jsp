@@ -25,7 +25,8 @@
 				<li><a href="table.html" class="${table}">Bean管理</a></li>
 				<li><a href="control.html" class="${control}">控制器管理</a></li>
 				<li><a href="column.html" class="${column}">字段管理</a></li>
-				<li><a href="relation.html" class="${relation}">关系管理</a></li>
+				<!-- <li><a href="relation.html" class="${relation}">关系管理</a></li>
+			 -->
 			</ul>
 			<ul id="detail_3" style="<c:if test='${empty nav_3}'>display:none</c:if>" >
 				<li><a href="columnConvert.html" class="${columnConvert}">字段转换配置</a></li>

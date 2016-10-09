@@ -18,6 +18,7 @@ import com.autocode.bean.ColumnConvert;
 import com.autocode.bean.DatabaseConvert;
 import com.autocode.bean.PackageConvert;
 import com.autocode.bean.Project;
+import com.autocode.bean.ProjectPackage;
 import com.autocode.bean.Table;
 import com.autocode.database.operator.ConnectMySql;
 import com.autocode.mapper.TableMapper;
@@ -96,6 +97,35 @@ public class TableServiceImpl extends BaseService implements TableService {
 		table.setProjectId(project.getProjectId());
 		table.setTableMemo("智能生成");
 		return insertTable(table);
+	}
+	
+	public Integer replaceBean(Integer projectId, String sourceName, String replaceName) {
+		if (isBlank(projectId)) {
+			throw new ServiceException("项目不能为空");
+		}
+		if (isBlank(sourceName)) {
+			throw new ServiceException("被替换值不能为空");
+		}
+		if (isBlank(replaceName)) {
+			replaceName = "";
+		}
+		try {
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("columnName", "projectId");
+			map.put("columnValue", projectId);
+			List<Table> list = this.tableMapper.queryObjectListForColumnName(map);
+			if (isNotBlank(list)) {
+				for (int i = 0; i < list.size(); i++) {
+					Table t = list.get(i);
+					t.setTableName(t.getTableName().replace(sourceName, replaceName));
+					updateTable(t);
+				}
+			}
+			return Integer.valueOf(list.size());
+		} catch (Exception e) {
+			LOG.error("Bean 一键替换失败", e);
+		}
+		throw new ServiceException("一键替换失败");
 	}
 
 	public Integer insertTable(Table table) {

@@ -64,14 +64,14 @@ public class ConnectMySql {
 					if (mappingName.contains("_"))
 						tableName = handleColumnLetter(mappingName, "table");
 					else {
-						tableName = "null";
+						tableName = "err";
 					}
 				}
 				if ((tableZhName == null) || (tableZhName.equals(""))) {
 					tableZhName = (String) translateMap.get(mappingName.toLowerCase());
 				}
 				if ((tableZhName == null) || (tableZhName.equals(""))) {
-					tableZhName = "null";
+					tableZhName = "err";
 				}
 				Table t = new Table(p.getProjectId(), tableZhName, mappingName, tableName, "NO", "自动生成");
 				t.setColumnList(columnList);

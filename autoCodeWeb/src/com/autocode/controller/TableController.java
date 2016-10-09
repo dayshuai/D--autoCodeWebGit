@@ -47,6 +47,7 @@ public class TableController extends BaseController {
 		}
 		return resultTrue();
 	}
+
 	/**
 	 * 添加需要的实体
 	 * 
@@ -149,6 +150,19 @@ public class TableController extends BaseController {
 			LOG.error("TableController[一键表前缀]");
 			return resultFalse(e.getMessage());
 		}
+	}
+	
+	@ResponseBody
+	@RequestMapping({ "replaceBean" })
+	public Map<String, Object> replaceBean(Model model, Integer projectId, String sourceName,
+			String replaceName) {
+		try {
+			this.tableService.replaceBean(projectId, sourceName, replaceName);
+		} catch (Exception e) {
+			LOG.error("Bean[一键替换失败]");
+			return resultFalse(e.getMessage());
+		}
+		return resultTrue();
 	}
 
 	@ResponseBody

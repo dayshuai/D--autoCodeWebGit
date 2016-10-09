@@ -79,4 +79,11 @@
 	<select id="queryObjectListForConvertError" resultType="Table" parameterType="Map">
 		SELECT * FROM ac_table WHERE projectId=#{projectId} AND (tableTitle=#{errorName} or tableName=#{errorName} )
 	</select>
+	
+	
+	<select id="queryObjectListForColumnName" resultType="Table" parameterType="Map">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_table WHERE ${columnName}=#{columnValue}
+	</select>
 </mapper>

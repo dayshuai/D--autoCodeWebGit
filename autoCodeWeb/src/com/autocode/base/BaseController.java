@@ -45,7 +45,7 @@ public class BaseController {
 	}
 
 	public Map<String, Object> resultFalse(String message) {
-		Map resultMap = new HashMap();
+		Map <String, Object> resultMap = new HashMap <String, Object> ();
 		resultMap.put("result", Boolean.valueOf(false));
 		resultMap.put("message", message);
 		return resultMap;
@@ -72,7 +72,7 @@ public class BaseController {
 	}
 
 	public Map<String, Object> resultTrue(JSONArray jsonArray) {
-		Map resultMap = new HashMap();
+		Map <String, Object> resultMap = new HashMap <String, Object> ();
 		resultMap.put("result", Boolean.valueOf(true));
 		resultMap.put("dataList", jsonArray);
 		return resultMap;

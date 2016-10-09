@@ -138,7 +138,7 @@
 		}
 		
 		function submitReplaceForm(){
-			var operatorUrl='projectPackage/replaceProjectPackage.html';
+			var operatorUrl='table/replaceBean.html';
 			bootbox.confirm("确定要替换吗", function(result) {
 				if (result) {
 					$.ajax({
@@ -178,6 +178,7 @@
 					return true;
 				},
 				success:function(data){
+					debugger;
 					if(data.result){
 						var tableList=data.dataList;
 						var tableHtml="<table class='table table-bordered table-condensed table-striped table-hover'>";
@@ -305,7 +306,7 @@
 		<div class="panel panel-default">
 			<div class="panel-body">
 				<div class="row">
-					<div class="col-xs-6">
+					<div class="col-xs-7">
 						<button class="btn btn-info" id="append"><i class="glyphicon glyphicon-file"></i>手动添加 </button>
 						<button class="btn btn-info" onclick="noopsycheAppend()"><i class="glyphicon glyphicon-refresh"></i>自定义添加 </button>
 						<button class="btn btn-info" onclick="onKeyAppend()"><i class="glyphicon glyphicon-cog"></i>全部添加</button>
@@ -321,17 +322,18 @@
 								<select id="searchProjectId" name="projectId" style="width:160px;">
 								</select>
 							</div>
-							<div class="col-xs-8">
+							<div class="col-xs-6">
 								<div class="input-group">
 									<span class="input-group-addon">关键字</span>
 									<input type="text" id="searchValue" name="searchValue" class="form-control">
 								 </div>
 							</div>
 						</form>
+						<div class="col-xs-1">
+							<button type="button" id="searchBtn" class="btn btn-primary"><i class="glyphicon glyphicon-search"></i>查询</button>			
+						</div>
 					</div>
-					<div class="col-xs-1">
-						<button type="button" id="searchBtn" class="btn btn-primary"><i class="glyphicon glyphicon-search"></i>查询</button>			
-					</div>
+					
 				</div>
 			</div>
 		</div>

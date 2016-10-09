@@ -80,15 +80,15 @@ public class ProjectPackageController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping({ "queryProjectPackageList" })
-	public Pagination queryProjectPackageList(Model model, ProjectPackage projectPackage) {
+	public Pagination<ProjectPackage> queryProjectPackageList(Model model, ProjectPackage projectPackage) {
 		try {
 			Integer totalCount = this.projectPackageService.queryProjectPackageCount(projectPackage);
-			List dataList = this.projectPackageService.queryProjectPackageList(projectPackage);
-			return new Pagination(projectPackage, totalCount, dataList);
+			List <ProjectPackage> dataList = this.projectPackageService.queryProjectPackageList(projectPackage);
+			return new Pagination<ProjectPackage>(projectPackage, totalCount, dataList);
 		} catch (ServiceException e) {
 			LOG.error("ProjectPackageController[查询列表失败]");
 		}
-		return new Pagination("查询列表异常");
+		return new Pagination<ProjectPackage>("查询列表异常");
 	}
 
 	@ResponseBody
