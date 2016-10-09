@@ -236,7 +236,13 @@ public class ProduceRun extends Thread {
 							Integer.valueOf(1), this.produceCount, endDate.getTime() - startDate.getTime() + "毫秒",
 							new Date(), "单表生成");
 				}*/
-				this.produceService.insertProduce(produce);
+				
+				try {
+					this.produceService.insertProduce(produce);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					throw new ServiceException( "insertProject失败");
+				}
 			}
 			if ((this.isOpenFile) && (this.produceCount.equals(this.writeCount)))
 				try {
