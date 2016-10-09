@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.autocode.mapper.ProduceMapper">
+	<sql id="columns">
+		produceId,produceTitle,produceName,tableAmount,fileAmount,wasteTime,createDate,memo
+	</sql>
+	
+	<insert id="insert" parameterType="Produce"  useGeneratedKeys="true" keyProperty="produceId">
+		INSERT INTO ac_produce (produceTitle,produceName,tableAmount,fileAmount,wasteTime,createDate,memo)
+		VALUES ( #{produceTitle},#{produceName},#{tableAmount},#{fileAmount},#{wasteTime},#{createDate},#{memo} )
+	</insert>
+
+	<update id="update" parameterType="Produce">
+		UPDATE ac_produce
+ 		SET produceTitle=#{produceTitle},produceName=#{produceName},tableAmount=#{tableAmount},fileAmount=#{fileAmount},wasteTime=#{wasteTime},createDate=#{createDate},memo=#{memo}
+		WHERE produceId = #{produceId}
+	</update>
+
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM ac_produce WHERE produceId = #{produceId}
+	</delete>
+
+	<select id="queryObjectCount" resultType="Integer" parameterType="Produce">
+		SELECT COUNT(1) FROM ac_produce 
+		<where>
+			<if test="searchValue!=null and searchValue!=''">
+				produceTitle like '%${searchValue}%' OR produceName like '%${searchValue}%'
+			</if>
+		</where>
+	</select>
+
+	<select id="queryObjectList" resultType="Produce" parameterType="Produce">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_produce 
+		<where>
+			<if test="searchValue!=null and searchValue!=''">
+				produceTitle like '%${searchValue}%' OR produceName like '%${searchValue}%'
+			</if>
+		</where>
+		ORDER BY produceId desc
+		LIMIT ${pageStart},${pageSize}
+	</select>
+
+	<select id="querySingleObject" resultType="Produce" parameterType="Integer">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_produce 
+		WHERE produceId = #{produceId}
+	</select>
+
+	<select id="queryObjectSelect" resultType="Produce" parameterType="Produce">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_produce 
+	</select>
+	
+	<select id="queryObjectListForColumnName" resultType="Produce" parameterType="Map">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_produce WHERE ${columnName}=#{columnValue}
+	</select>
+</mapper>
