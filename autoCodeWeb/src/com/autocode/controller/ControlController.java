@@ -80,14 +80,14 @@ public class ControlController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping({ "queryControlList" })
-	public Pagination queryControlList(Model model, Control control) {
+	public Pagination<Control> queryControlList(Model model, Control control) {
 		try {
 			Integer totalCount = this.controlService.queryControlCount(control);
-			List dataList = this.controlService.queryControlList(control);
-			return new Pagination(control, totalCount, dataList);
+			List <Control> dataList = this.controlService.queryControlList(control);
+			return new Pagination<Control>(control, totalCount, dataList);
 		} catch (ServiceException e) {
 			LOG.error("ControlController[查询列表失败]");
 		}
-		return new Pagination("查询列表异常");
+		return new Pagination<Control>("查询列表异常");
 	}
 }

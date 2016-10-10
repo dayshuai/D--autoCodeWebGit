@@ -10,14 +10,14 @@ public class Pagination<E> {
 	private String pageHtml;
 	private boolean result;
 	private String message;
-	private List<E> dataList = new ArrayList <E> ();
+	private List<E> dataList = new ArrayList<E>();
 
 	public Pagination(BaseBean bean, Integer totalCount, List<E> dataList) {
 		if (totalCount.intValue() == 0) {
 			this.pageCount = Integer.valueOf(0);
 			this.pageStart = Integer.valueOf(1);
 			this.pageEnd = Integer.valueOf(10);
-			this.dataList = new ArrayList <E> ();
+			this.dataList = new ArrayList<E>();
 			this.result = true;
 			this.pageHtml = "";
 		} else {

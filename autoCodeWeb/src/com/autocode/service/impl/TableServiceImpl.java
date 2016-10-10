@@ -15,15 +15,16 @@ import com.autocode.base.BaseService;
 import com.autocode.base.ServiceException;
 import com.autocode.bean.Column;
 import com.autocode.bean.ColumnConvert;
+import com.autocode.bean.Control;
 import com.autocode.bean.DatabaseConvert;
 import com.autocode.bean.PackageConvert;
 import com.autocode.bean.Project;
-import com.autocode.bean.ProjectPackage;
 import com.autocode.bean.Table;
 import com.autocode.database.operator.ConnectMySql;
 import com.autocode.mapper.TableMapper;
 import com.autocode.service.ColumnConvertService;
 import com.autocode.service.ColumnService;
+import com.autocode.service.ControlService;
 import com.autocode.service.DatabaseConvertService;
 import com.autocode.service.PackageConvertService;
 import com.autocode.service.ProjectService;
@@ -39,6 +40,9 @@ public class TableServiceImpl extends BaseService implements TableService {
 
 	@Autowired
 	private TableMapper tableMapper;
+	
+	@Autowired
+	private ControlService controlService;
 
 	
 	@Autowired
@@ -139,20 +143,38 @@ public class TableServiceImpl extends BaseService implements TableService {
 			LOG.error("TableServiceImpl.insertTable [ " + table + " ] 添加失败", e);
 			throw new ServiceException("添加失败");
 		}
+		//默认control
+		try {
+			if (table != null) {
+				Control c = new Control();
+				c.setIsDeleteMethod("YES");
+				c.setIsInsertMethod("YES");
+				c.setIsQueryMethod("YES");
+				c.setIsSelectMethod("YES");
+				c.setIsUpdateMethod("YES");
+				c.setProjectId(table.getProjectId());
+				c.setTableId(table.getTableId());
+				this.controlService.insertControl(c);
+			}
+		} catch (Exception e) {
+			throw new ServiceException("默认添加control失败");
+		}
+		
 		try {
 			Project project = this.projectService.querySingleProject(table.getProjectId());
 			if (project == null) {
 				throw new ServiceException("请刷新网页后重试");
-				
-				
 			}
 			boolean readFlag = true;
 			if ((table.getColumnList() == null) || (table.getColumnList().size() == 0)) {
 				if (project.getIsValidation().equals("NO")) {
 					throw new ServiceException("请先验证项目数据库");
 				}
+				//字段名转化 
 				List <ColumnConvert> columnConvertList = this.columnConvertService.queryColumnConvertSelect();
+				//包名转化 如Date java.util.date
 				List <PackageConvert> packageConvertList = this.packageConvertService.queryPackageConvertSelect();
+				//数据库字段转化 如 vachar String 
 				List <DatabaseConvert> databaseConvertList = this.databaseConvertService
 						.queryDatabaseConvertListByDatabaseType(project.getDatabaseType());
 				ConnectMySql connectMySql = new ConnectMySql();
@@ -163,7 +185,7 @@ public class TableServiceImpl extends BaseService implements TableService {
 				readFlag = false;
 			}
 
-			Map <String, String> databaseConvertMap = new HashMap <String, String> ();
+			/*Map <String, String> databaseConvertMap = new HashMap <String, String> ();
 			Map <String, String> packageConvertMap = new HashMap <String, String> ();
 			if (readFlag) {
 				List <DatabaseConvert> databaseConvertList = this.databaseConvertService
@@ -181,7 +203,7 @@ public class TableServiceImpl extends BaseService implements TableService {
 						packageConvertMap.put(pc.getClassName(), pc.getPackageName());
 					}
 				}
-			}
+			}*/
 			//将表中column存入表中
 			if ((table.getColumnList() != null) && (table.getColumnList().size() > 0)) {
 				
@@ -191,17 +213,17 @@ public class TableServiceImpl extends BaseService implements TableService {
 						column.setProjectId(table.getProjectId());
 						column.setTableId(table.getTableId());
 						column.setShowOrder(Integer.valueOf(i + 1));
-						String columnType = (String) databaseConvertMap.get(workedColumnType(column.getMappingType()));
+						/*String columnType = (String) databaseConvertMap.get(workedColumnType(column.getMappingType()));
 						if (columnType != null)
 							column.setColumnType(columnType);
 						else {
-							column.setColumnType("Error:0");
+							column.setColumnType("null");
 						}
 						if (packageConvertMap.get(column.getColumnType()) != null)
 							column.setIsImportPackage("YES");
 						else {
 							column.setIsImportPackage("NO");
-						}
+						}*/
 					}
 					
 					if ((column.getIsQuery() == null) || (column.getIsQuery().equals(""))) {
@@ -235,6 +257,7 @@ public class TableServiceImpl extends BaseService implements TableService {
 		} catch (Exception e) {
 			LOG.error("TableServiceImpl.updateTable [ " + table + " ] 修改失败", e);
 		}
+		
 		throw new ServiceException("修改失败");
 	}
 
@@ -245,6 +268,21 @@ public class TableServiceImpl extends BaseService implements TableService {
 		} catch (Exception e) {
 			LOG.error("TableServiceImpl.deleteTable [ " + tableId + " ] 删除失败", e);
 		}
+		//删除table对应的column
+		try {
+			this.columnService.deleteColumnByTableId(tableId);
+		} catch (Exception e) {
+			LOG.error("columnService.deleteColumnByTableId [ " + tableId + " ] 删除失败", e);
+		}
+		//删除table对应的control
+		try {
+			this.controlService.deleteControlByTableId(tableId);
+		} catch (Exception e) {
+			LOG.error("controlService.deleteControlByTableId [ " + tableId + " ] 删除失败", e);
+		}
+		
+		
+		
 		throw new ServiceException("删除失败");
 	}
 
@@ -383,7 +421,7 @@ public class TableServiceImpl extends BaseService implements TableService {
 		List<PackageConvert> packageConvertList = this.packageConvertService.queryPackageConvertSelect();
 		List<DatabaseConvert> databaseConvertList = this.databaseConvertService
 				.queryDatabaseConvertListByDatabaseType(project.getDatabaseType());
-		List<?> projectTableList = this.tableMapper.queryObjectListByProjectId(projectId);
+		List<Table> projectTableList = this.tableMapper.queryObjectListByProjectId(projectId);
 
 		if (project.getDatabaseType().equals("MySql")) {
 			ConnectMySql connectMySql = new ConnectMySql();

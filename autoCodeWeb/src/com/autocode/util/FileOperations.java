@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public class FileOperations {
 	public static List<String> readTextContentReturenList(String path) {
-		List linkStrList = new ArrayList();
+		List <String> linkStrList = new ArrayList <String> ();
 		try {
 			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(path))));
 			String str = "";
@@ -203,7 +203,7 @@ public class FileOperations {
 	}
 
 	public static void main(String[] args) {
-		List list = new ArrayList();
+		List <String> list = new ArrayList <String> ();
 		list.add("ACTIVITY_20160229221726580_1128_686_1101.png");
 		list.add("ACTIVITY_20160229221726581_1127_684_833.png");
 		list.add("ACTIVITY_20160229221726582_4272_2848_635.jpg");

@@ -71,7 +71,7 @@ public class BaseController {
 		return resultMap;
 	}
 
-	public Map<String, Object> resultTrue(JSONArray jsonArray) {
+	public Map <String, Object> resultTrue(JSONArray jsonArray) {
 		Map <String, Object> resultMap = new HashMap <String, Object> ();
 		resultMap.put("result", Boolean.valueOf(true));
 		resultMap.put("dataList", jsonArray);

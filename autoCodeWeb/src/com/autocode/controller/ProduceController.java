@@ -384,7 +384,7 @@ public class ProduceController extends BaseController {
 			String templatePath = request.getSession().getServletContext()
 					.getRealPath("template/" + template.getTemplateName());
 			File file = new File(templatePath);
-			List templateConfigList = new ArrayList();
+			List<TemplateConfig> templateConfigList = new ArrayList<TemplateConfig>();
 			templateConfigList.add(templateConfig);
 
 			if (file.exists()) {
@@ -401,13 +401,13 @@ public class ProduceController extends BaseController {
 			} else {
 				return resultFalse(template.getTemplateName() + "模板,没有导入模板文件。");
 			}
-			List tableList = this.tableService.queryTableListByProjectId(projectId);
+			List<Table> tableList = this.tableService.queryTableListByProjectId(projectId);
 			if ((tableList == null) || (tableList.size() == 0)) {
 				return resultFalse(project.getProjectName() + "项目下没有表,不能生成。");
 			}
-			List controlList = this.controlService.queryControlListByProjectId(projectId);
+			List<Control> controlList = this.controlService.queryControlListByProjectId(projectId);
 			if (controlList == null) {
-				controlList = new ArrayList();
+				controlList = new ArrayList<Control>();
 			}
 			int beanAmount = tableList.size();
 			int controllerAmount = controlList.size();
@@ -424,8 +424,8 @@ public class ProduceController extends BaseController {
 				}
 			}
 
-			List packageConvertList = this.packageConvertService.queryPackageConvertSelect();
-			Map packageMap = new HashMap();
+			List<PackageConvert> packageConvertList = this.packageConvertService.queryPackageConvertSelect();
+			Map<String, String> packageMap = new HashMap<String, String>();
 			if ((packageConvertList != null) && (packageConvertList.size() > 0)) {
 				for (int i = 0; i < packageConvertList.size(); i++) {
 					PackageConvert pc = (PackageConvert) packageConvertList.get(i);
@@ -434,7 +434,7 @@ public class ProduceController extends BaseController {
 			}
 			for (int i = 0; i < tableList.size(); i++) {
 				Table table = (Table) tableList.get(i);
-				List columnList = this.columnService.queryColumnListByTableId(table.getTableId());
+				List<Column> columnList = this.columnService.queryColumnListByTableId(table.getTableId());
 				for (int j = 0; j < columnList.size(); j++) {
 					Column column = (Column) columnList.get(j);
 					if ((column.getIsImportPackage().equals("YES")) && (packageMap.size() > 0)) {
@@ -450,7 +450,7 @@ public class ProduceController extends BaseController {
 			}
 			String writePath = request.getSession().getServletContext().getRealPath("produceFiles/classProduce");
 			ProduceFileUtil.deleteFile(writePath, project.getProjectName());
-			List projectPackageList = this.projectPackageService.queryProjectPackageListByProjectId(projectId);
+			List<ProjectPackage> projectPackageList = this.projectPackageService.queryProjectPackageListByProjectId(projectId);
 			try {
 				this.taskExecutor.execute(new ProduceRun(project, this.produceService, projectPackageList, tableList,
 						controlList, packageConvertList, templateConfigList, isOpenFile, produceCount,
@@ -459,7 +459,7 @@ public class ProduceController extends BaseController {
 				e.printStackTrace();
 				return resultFalse("线程异常，请联系管理员。");
 			}
-			HashMap map = new HashMap();
+			HashMap<String, Object> map = new HashMap<String, Object>();
 
 			Config config = this.configService.queryConfigListForColumnName("configName", "LocalhostRun");
 			if ((config == null) || (config.getConfigValue().equals("NO")))
@@ -497,7 +497,7 @@ public class ProduceController extends BaseController {
 				return resultFalse("表不存在。");
 			}
 
-			List templateConfigList = this.templateConfigService.queryTemplateConfigListForColumnName("templateId",
+			List<TemplateConfig> templateConfigList = this.templateConfigService.queryTemplateConfigListForColumnName("templateId",
 					templateId);
 			if ((templateConfigList == null) || (templateConfigList.size() == 0)) {
 				return resultFalse(template.getTemplateName() + "模板下没有配置信息,请配置。");
@@ -529,9 +529,9 @@ public class ProduceController extends BaseController {
 			} else {
 				return resultFalse(template.getTemplateName() + "模板,没有导入模板文件。");
 			}
-			List tableList = new ArrayList();
+			List<Table> tableList = new ArrayList<Table>();
 			tableList.add(table);
-			List controlList = new ArrayList();
+			List<Control> controlList = new ArrayList<Control>();
 			Control control = this.controlService.querySingleControlByColumnName("tableId", table.getTableId());
 			if (control != null) {
 				controlList.add(control);
@@ -551,15 +551,15 @@ public class ProduceController extends BaseController {
 				}
 			}
 
-			List packageConvertList = this.packageConvertService.queryPackageConvertSelect();
-			Map packageMap = new HashMap();
+			List<PackageConvert> packageConvertList = this.packageConvertService.queryPackageConvertSelect();
+			Map<String, String> packageMap = new HashMap<String, String>();
 			if ((packageConvertList != null) && (packageConvertList.size() > 0)) {
 				for (int i = 0; i < packageConvertList.size(); i++) {
 					PackageConvert pc = (PackageConvert) packageConvertList.get(i);
 					packageMap.put(pc.getClassName(), pc.getPackageName());
 				}
 			}
-			List columnList = this.columnService.queryColumnListByTableId(table.getTableId());
+			List<Column> columnList = this.columnService.queryColumnListByTableId(table.getTableId());
 			for (int j = 0; j < columnList.size(); j++) {
 				Column column = (Column) columnList.get(j);
 				if ((column.getIsImportPackage().equals("YES")) && (packageMap.size() > 0)) {
@@ -574,7 +574,7 @@ public class ProduceController extends BaseController {
 			table.setColumnList(columnList);
 			String writePath = request.getSession().getServletContext().getRealPath("produceFiles/tableProduce");
 			ProduceFileUtil.deleteFile(writePath, project.getProjectName());
-			List projectPackageList = this.projectPackageService.queryProjectPackageListByProjectId(projectId);
+			List<ProjectPackage> projectPackageList = this.projectPackageService.queryProjectPackageListByProjectId(projectId);
 			try {
 				this.taskExecutor.execute(new ProduceRun(project, this.produceService, projectPackageList, tableList,
 						controlList, packageConvertList, templateConfigList, isOpenFile, produceCount, templatePath,
@@ -583,7 +583,7 @@ public class ProduceController extends BaseController {
 				e.printStackTrace();
 				return resultFalse("线程异常，请联系管理员。");
 			}
-			HashMap map = new HashMap();
+			HashMap<String, Object> map = new HashMap<String, Object>();
 
 			Config config = this.configService.queryConfigListForColumnName("configName", "LocalhostRun");
 			if ((config == null) || (config.getConfigValue().equals("NO")))
@@ -608,14 +608,14 @@ public class ProduceController extends BaseController {
 				writeInfo(response, "项目不能为空!");
 				return;
 			}
-			List tableList = this.tableService.queryTableListByProjectId(projectId);
+			List<?> tableList = this.tableService.queryTableListByProjectId(projectId);
 			if ((tableList == null) || (tableList.size() == 0)) {
 				writeInfo(response, project.getProjectName() + "项目下没有表,不能生成。");
 				return;
 			}
 			for (int i = 0; i < tableList.size(); i++) {
 				Table table = (Table) tableList.get(i);
-				List columnList = this.columnService.queryColumnListByTableId(table.getTableId());
+				List<Column> columnList = this.columnService.queryColumnListByTableId(table.getTableId());
 				if ((columnList == null) || (columnList.size() == 0)) {
 					writeInfo(response, table.getMappingName() + "表下没有字段!");
 					return;
@@ -623,7 +623,7 @@ public class ProduceController extends BaseController {
 				table.setColumnList(columnList);
 			}
 			if (project.getDatabaseType().equals("MySql")) {
-				Map contentMap = new HashMap();
+				Map<String, Object> contentMap = new HashMap<String, Object>();
 				contentMap.put("project", project);
 				contentMap.put("tableList", tableList);
 				contentMap.put("date", DateTimeUtil.FormatCurrentDateTime());
@@ -758,14 +758,14 @@ public class ProduceController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping({ "queryProduceList" })
-	public Pagination queryProduceList(Model model, Produce produce) {
+	public Pagination <Produce> queryProduceList(Model model, Produce produce) {
 		try {
 			Integer totalCount = this.produceService.queryProduceCount(produce);
-			List dataList = this.produceService.queryProduceList(produce);
-			return new Pagination(produce, totalCount, dataList);
+			List <Produce> dataList = this.produceService.queryProduceList(produce);
+			return new Pagination<Produce>(produce, totalCount, dataList);
 		} catch (ServiceException e) {
 			LOG.error("ProduceController[查询列表失败]", e);
 		}
-		return new Pagination("查询列表异常");
+		return new Pagination<Produce>("查询列表异常");
 	}
 }

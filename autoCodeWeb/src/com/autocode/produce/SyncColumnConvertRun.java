@@ -22,7 +22,7 @@ public class SyncColumnConvertRun extends Thread {
 				ColumnConvert columnConvert = new ColumnConvert(table.getMappingName(), table.getTableName(),
 						table.getTableTitle());
 				handleColumnConvert(columnConvert);
-				List columnList = table.getColumnList();
+				List <Column> columnList = table.getColumnList();
 				if ((columnList != null) && (columnList.size() > 0))
 					for (int j = 0; j < columnList.size(); j++) {
 						Column c = (Column) columnList.get(j);
@@ -33,7 +33,7 @@ public class SyncColumnConvertRun extends Thread {
 	}
 
 	private void handleColumnConvert(ColumnConvert columnConvert) {
-		List columnConvertList = this.columnConvertService.queryColumnConvertListForColumnName("mappingName",
+		List <ColumnConvert> columnConvertList = this.columnConvertService.queryColumnConvertListForColumnName("mappingName",
 				columnConvert.getMappingName());
 		if ((columnConvertList != null) && (columnConvertList.size() > 0)) {
 			ColumnConvert cc = (ColumnConvert) columnConvertList.get(0);

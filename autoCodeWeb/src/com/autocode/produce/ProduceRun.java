@@ -227,21 +227,23 @@ public class ProduceRun extends Thread {
 					produce = new Produce(this.project.getProjectTitle(), this.project.getProjectName(),
 							Integer.valueOf(this.tableList.size()), this.produceCount,
 							endDate.getTime() - startDate.getTime() + "毫秒", new Date(), "项目生成");
-				} /*else if (this.produceType.equals("classProduce")) {
-					produce = new Produce(this.project.getProjectTitle(), this.project.getProjectName(),
-							Integer.valueOf(this.tableList.size()), this.produceCount,
-							endDate.getTime() - startDate.getTime() + "毫秒", new Date(), "类别生成");
-				} else {
-					produce = new Produce(this.project.getProjectTitle(), this.project.getProjectName(),
-							Integer.valueOf(1), this.produceCount, endDate.getTime() - startDate.getTime() + "毫秒",
-							new Date(), "单表生成");
-				}*/
-				
+				} /*
+					 * else if (this.produceType.equals("classProduce")) {
+					 * produce = new Produce(this.project.getProjectTitle(),
+					 * this.project.getProjectName(),
+					 * Integer.valueOf(this.tableList.size()),
+					 * this.produceCount, endDate.getTime() -
+					 * startDate.getTime() + "毫秒", new Date(), "类别生成"); } else {
+					 * produce = new Produce(this.project.getProjectTitle(),
+					 * this.project.getProjectName(), Integer.valueOf(1),
+					 * this.produceCount, endDate.getTime() -
+					 * startDate.getTime() + "毫秒", new Date(), "单表生成"); }
+					 */
+
 				try {
 					this.produceService.insertProduce(produce);
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					throw new ServiceException( "insertProject失败");
+					throw new ServiceException("insertProject失败");
 				}
 			}
 			if ((this.isOpenFile) && (this.produceCount.equals(this.writeCount)))
