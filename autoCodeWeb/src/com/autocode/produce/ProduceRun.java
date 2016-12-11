@@ -1,5 +1,6 @@
 package com.autocode.produce;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +15,7 @@ import com.autocode.bean.PackageConvert;
 import com.autocode.bean.Produce;
 import com.autocode.bean.Project;
 import com.autocode.bean.ProjectPackage;
+import com.autocode.bean.Relation;
 import com.autocode.bean.Table;
 import com.autocode.bean.TemplateConfig;
 import com.autocode.service.ProduceService;
@@ -33,6 +35,7 @@ public class ProduceRun extends Thread {
 	private boolean isOpenFile;
 	private String templatePath;
 	private String writePath;
+	private List<Relation> relationList;
 	private String projectName;
 	private String produceType;
 	private Integer writeCount = Integer.valueOf(0);
@@ -44,7 +47,7 @@ public class ProduceRun extends Thread {
 	public ProduceRun(Project project, ProduceService produceService, List<ProjectPackage> projectPackageList,
 			List<Table> tableList, List<Control> controlList, List<PackageConvert> packageConvertList,
 			List<TemplateConfig> templateConfigList, boolean isOpenFile, int produceCount, String templatePath,
-			String writePath, String produceType) {
+			String writePath, String produceType, List<Relation> relationList) {
 		this.project = project;
 		this.projectPackageList = projectPackageList;
 		this.tableList = tableList;
@@ -58,7 +61,25 @@ public class ProduceRun extends Thread {
 		this.projectName = project.getProjectName();
 		this.produceType = produceType;
 		this.produceService = produceService;
+		this.relationList = relationList;
 		initPrepare();
+	}
+	
+	public void putRelation(Table table) {
+		List list = new ArrayList();
+		if ((this.relationList != null) && (this.relationList.size() > 0)) {
+			for (int i = 0; i < this.relationList.size(); i++) {
+				Relation r = (Relation) this.relationList.get(i);
+				if (r.getTableId().equals(table.getTableId())) {
+					list.add(r);
+				}
+			}
+		}
+		this.contentMap.put("relationList", list);
+		if (list.size() > 0)
+			this.contentMap.put("isRelation", "true");
+		else
+			this.contentMap.put("isRelation", "false");
 	}
 
 	private void initPrepare() {
@@ -137,6 +158,7 @@ public class ProduceRun extends Thread {
 									this.contentMap.put("table", table);
 									this.contentMap.put("control", control);
 									putPrimaryKeyColumn(table);
+									putRelation(table);
 									this.contentMap.put("columnList", table.getColumnList());
 									break;
 								}
@@ -153,6 +175,7 @@ public class ProduceRun extends Thread {
 							Table table = (Table) this.tableList.get(j);
 							this.contentMap.put("table", table);
 							putPrimaryKeyColumn(table);
+							putRelation(table);
 							this.fileName = templateConfig.getProduceName().replace("[replace]", table.getTableName());
 							this.contentMap.put("className", getClassName(this.fileName));
 							this.contentMap.put("columnList", table.getColumnList());
@@ -176,6 +199,7 @@ public class ProduceRun extends Thread {
 								this.contentMap.put("table", table);
 								this.contentMap.put("control", control);
 								putPrimaryKeyColumn(table);
+								putRelation(table);
 								this.contentMap.put("columnList", table.getColumnList());
 								break;
 							}
@@ -192,6 +216,7 @@ public class ProduceRun extends Thread {
 						Table table = (Table) this.tableList.get(j);
 						this.contentMap.put("table", table);
 						putPrimaryKeyColumn(table);
+						putRelation(table);
 						this.fileName = templateConfig.getProduceName().replace("[replace]", table.getTableName());
 						this.contentMap.put("columnList", table.getColumnList());
 						this.contentMap.put("className", getClassName(this.fileName));
@@ -261,7 +286,12 @@ public class ProduceRun extends Thread {
 			this.contentMap.remove("javaPrimary");
 			this.contentMap.remove("databasePrimary");
 			this.contentMap.remove("showColumnName");
-
+			for (int i = 0; i < this.relationList.size(); i++) {
+				Relation r = (Relation) this.relationList.get(i);
+				if ((r.getRelationTableId().equals(table.getTableId())) && (r.getRelationShowColumnId() != null)) {
+					this.contentMap.put("showColumnName", r.getRelationShowColumnName());
+				}
+			}
 			List<Column> columnList = table.getColumnList();
 			for (int i = 0; i < columnList.size(); i++) {
 				Column column = (Column) columnList.get(i);

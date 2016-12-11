@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -35,6 +36,7 @@ import com.autocode.bean.PackageConvert;
 import com.autocode.bean.Produce;
 import com.autocode.bean.Project;
 import com.autocode.bean.ProjectPackage;
+import com.autocode.bean.Relation;
 import com.autocode.bean.Table;
 import com.autocode.bean.TemplateConfig;
 import com.autocode.produce.ProduceFileUtil;
@@ -46,6 +48,7 @@ import com.autocode.service.PackageConvertService;
 import com.autocode.service.ProduceService;
 import com.autocode.service.ProjectPackageService;
 import com.autocode.service.ProjectService;
+import com.autocode.service.RelationService;
 import com.autocode.service.TableService;
 import com.autocode.service.TemplateConfigService;
 import com.autocode.service.TemplateService;
@@ -95,6 +98,9 @@ public class ProduceController extends BaseController {
 	@Qualifier("taskExecutor")
 	private TaskExecutor taskExecutor;
 
+	@Autowired
+	private RelationService relationService;
+
 	@RequestMapping
 	public String index(Model model) {
 		model.addAttribute("nav_5", "onnav");
@@ -128,14 +134,12 @@ public class ProduceController extends BaseController {
 	public Map<String, Object> queryProjectInfo(Model model, HttpServletRequest request, Integer projectId,
 			Integer templateId) {
 		try {
-			/*String error = "Error:0";
-			List tableList = this.tableService.queryTableListForConvertError(projectId, error);
-			List columnList = this.columnService.queryColumnListForConvertError(projectId, error);
+			String error = "Error:0";
+			List <Table> tableList = this.tableService.queryTableListForConvertError(projectId, error);
+			List <Column> columnList = this.columnService.queryColumnListForConvertError(projectId, error);
 			if ((isNotBlank(tableList)) || (isNotBlank(columnList))) {
 				return resultFalse("请先解决项目中没有修改的 Error:0 信息");
-			}*/
-			List <Table> tableList = new ArrayList<Table>();
-			List <Column> columnList = new ArrayList<Column>();
+			}
 			Project project = this.projectService.querySingleProject(projectId);
 			if (project == null) {
 				return resultFalse("请先选择项目");
@@ -147,8 +151,8 @@ public class ProduceController extends BaseController {
 			if (!project.getProjectFrame().equals(template.getApplyFrame())) {
 				return resultFalse("项目框架不匹配该模板,不能用在该项目上");
 			}
-			List <TemplateConfig> templateConfigList = this.templateConfigService.queryTemplateConfigListForColumnName("templateId",
-					templateId);
+			List<TemplateConfig> templateConfigList = this.templateConfigService
+					.queryTemplateConfigListForColumnName("templateId", templateId);
 			if ((templateConfigList == null) || (templateConfigList.size() == 0)) {
 				return resultFalse(template.getTemplateName() + "模板下没有配置信息,请配置。");
 			}
@@ -156,11 +160,11 @@ public class ProduceController extends BaseController {
 			if ((tableList == null) || (tableList.size() == 0)) {
 				return resultFalse(project.getProjectName() + "项目下没有表,不能生成。");
 			}
-			List <Control> controlList = this.controlService.queryControlListByProjectId(projectId);
+			List<Control> controlList = this.controlService.queryControlListByProjectId(projectId);
 			if ((controlList == null) || (controlList.size() == 0)) {
 				return resultFalse(project.getProjectName() + "项目下没有控制器类,不能生成。");
 			}
-			Map <String, Object> map = new HashMap <String, Object> ();
+			Map<String, Object> map = new HashMap<String, Object>();
 
 			for (int i = 0; i < tableList.size(); i++) {
 				Table t = (Table) tableList.get(0);
@@ -268,8 +272,8 @@ public class ProduceController extends BaseController {
 			if ((config != null) && (StringUtils.equals("YES", config.getConfigValue()))) {
 				isOpenFile = true;
 			}
-			List <TemplateConfig> templateConfigList = this.templateConfigService.queryTemplateConfigListForColumnName("templateId",
-					templateId);
+			List<TemplateConfig> templateConfigList = this.templateConfigService
+					.queryTemplateConfigListForColumnName("templateId", templateId);
 			if ((templateConfigList == null) || (templateConfigList.size() == 0)) {
 				return resultFalse(template.getTemplateName() + "模板下没有配置信息,请配置。");
 			}
@@ -295,11 +299,11 @@ public class ProduceController extends BaseController {
 			} else {
 				return resultFalse(template.getTemplateName() + "模板,没有导入模板文件。");
 			}
-			List <Table> tableList = this.tableService.queryTableListByProjectId(projectId);
+			List<Table> tableList = this.tableService.queryTableListByProjectId(projectId);
 			if ((tableList == null) || (tableList.size() == 0)) {
 				return resultFalse(project.getProjectName() + "项目下没有表,不能生成。");
 			}
-			List <Control> controlList = this.controlService.queryControlListByProjectId(projectId);
+			List<Control> controlList = this.controlService.queryControlListByProjectId(projectId);
 			if ((controlList == null) || (controlList.size() == 0)) {
 				return resultFalse(project.getProjectName() + "项目下没有控制器类,不能生成。");
 			}
@@ -318,8 +322,8 @@ public class ProduceController extends BaseController {
 				}
 			}
 
-			List <PackageConvert> packageConvertList = this.packageConvertService.queryPackageConvertSelect();
-			Map <String, String> packageMap = new HashMap <String, String> ();
+			List<PackageConvert> packageConvertList = this.packageConvertService.queryPackageConvertSelect();
+			Map<String, String> packageMap = new HashMap<String, String>();
 			if ((packageConvertList != null) && (packageConvertList.size() > 0)) {
 				for (int i = 0; i < packageConvertList.size(); i++) {
 					PackageConvert pc = (PackageConvert) packageConvertList.get(i);
@@ -328,7 +332,7 @@ public class ProduceController extends BaseController {
 			}
 			for (int i = 0; i < tableList.size(); i++) {
 				Table table = tableList.get(i);
-				List <Column> columnList = this.columnService.queryColumnListByTableId(table.getTableId());
+				List<Column> columnList = this.columnService.queryColumnListByTableId(table.getTableId());
 				for (int j = 0; j < columnList.size(); j++) {
 					Column column = columnList.get(j);
 					if ((column.getIsImportPackage().equals("YES")) && (packageMap.size() > 0)) {
@@ -344,11 +348,34 @@ public class ProduceController extends BaseController {
 			}
 			String writePath = request.getSession().getServletContext().getRealPath("produceFiles/projectProduce");
 			ProduceFileUtil.deleteFile(writePath, project.getProjectName());
-			List <ProjectPackage> projectPackageList = this.projectPackageService.queryProjectPackageListByProjectId(projectId);
+			List<ProjectPackage> projectPackageList = this.projectPackageService
+					.queryProjectPackageListByProjectId(projectId);
+			List relationList = this.relationService.queryRelationListForColumnName("projectId", projectId);
+			if ((relationList != null) && (relationList.size() > 0)) {
+				for (int i = 0; i < relationList.size(); i++) {
+					Relation r = (Relation) relationList.get(i);
+					if ((!r.getRelation().equals("ManyToOne")) && (!r.getRelation().equals("ManyToMany"))) {
+						for (int j = 0; j < tableList.size(); j++) {
+							Table table = (Table) tableList.get(j);
+							for (int k = 0; k < table.getColumnList().size(); k++) {
+								Column c = (Column) table.getColumnList().get(k);
+								if (c.getColumnId().equals(r.getRelationColumnId())) {
+									c.setIsForeign("YES");
+									c.setForeignTableName(r.getTableName());
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+			if (CollectionUtils.isEmpty(relationList)) {
+				relationList = new ArrayList();
+			}
 			try {
 				this.taskExecutor.execute(new ProduceRun(project, this.produceService, projectPackageList, tableList,
-						controlList, packageConvertList, templateConfigList, isOpenFile, produceCount,
-						templatePath, writePath, "projectProduce"));
+						controlList, packageConvertList, templateConfigList, isOpenFile, produceCount, templatePath,
+						writePath, "projectProduce", relationList));
 			} catch (RejectedExecutionException e) {
 				e.printStackTrace();
 				return resultFalse("线程异常，请联系管理员。");
@@ -450,11 +477,31 @@ public class ProduceController extends BaseController {
 			}
 			String writePath = request.getSession().getServletContext().getRealPath("produceFiles/classProduce");
 			ProduceFileUtil.deleteFile(writePath, project.getProjectName());
-			List<ProjectPackage> projectPackageList = this.projectPackageService.queryProjectPackageListByProjectId(projectId);
+			List<ProjectPackage> projectPackageList = this.projectPackageService
+					.queryProjectPackageListByProjectId(projectId);
+			List relationList = this.relationService.queryRelationListForColumnName("projectId", projectId);
+			if ((relationList != null) && (relationList.size() > 0)) {
+				for (int i = 0; i < relationList.size(); i++) {
+					Relation r = (Relation) relationList.get(i);
+					if ((!r.getRelation().equals("ManyToOne")) && (!r.getRelation().equals("ManyToMany"))) {
+						for (int j = 0; j < tableList.size(); j++) {
+							Table table = (Table) tableList.get(j);
+							for (int k = 0; k < table.getColumnList().size(); k++) {
+								Column c = (Column) table.getColumnList().get(k);
+								if (c.getColumnId().equals(r.getRelationColumnId())) {
+									c.setIsForeign("YES");
+									c.setForeignTableName(r.getTableName());
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
 			try {
 				this.taskExecutor.execute(new ProduceRun(project, this.produceService, projectPackageList, tableList,
-						controlList, packageConvertList, templateConfigList, isOpenFile, produceCount,
-						templatePath, writePath, "classProduce"));
+						controlList, packageConvertList, templateConfigList, isOpenFile, produceCount, templatePath,
+						writePath, "classProduce", relationList));
 			} catch (RejectedExecutionException e) {
 				e.printStackTrace();
 				return resultFalse("线程异常，请联系管理员。");
@@ -497,8 +544,8 @@ public class ProduceController extends BaseController {
 				return resultFalse("表不存在。");
 			}
 
-			List<TemplateConfig> templateConfigList = this.templateConfigService.queryTemplateConfigListForColumnName("templateId",
-					templateId);
+			List<TemplateConfig> templateConfigList = this.templateConfigService
+					.queryTemplateConfigListForColumnName("templateId", templateId);
 			if ((templateConfigList == null) || (templateConfigList.size() == 0)) {
 				return resultFalse(template.getTemplateName() + "模板下没有配置信息,请配置。");
 			}
@@ -574,11 +621,28 @@ public class ProduceController extends BaseController {
 			table.setColumnList(columnList);
 			String writePath = request.getSession().getServletContext().getRealPath("produceFiles/tableProduce");
 			ProduceFileUtil.deleteFile(writePath, project.getProjectName());
-			List<ProjectPackage> projectPackageList = this.projectPackageService.queryProjectPackageListByProjectId(projectId);
+			List<ProjectPackage> projectPackageList = this.projectPackageService
+					.queryProjectPackageListByProjectId(projectId);
+			List relationList = this.relationService.queryRelationListForColumnName("projectId", projectId);
+			if ((relationList != null) && (relationList.size() > 0)) {
+				for (int i = 0; i < relationList.size(); i++) {
+					Relation r = (Relation) relationList.get(i);
+					if ((!r.getRelation().equals("ManyToOne")) && (!r.getRelation().equals("ManyToMany"))) {
+						for (int k = 0; k < table.getColumnList().size(); k++) {
+							Column c = (Column) table.getColumnList().get(k);
+							if (c.getColumnId().equals(r.getRelationColumnId())) {
+								c.setIsForeign("YES");
+								c.setForeignTableName(r.getTableName());
+								break;
+							}
+						}
+					}
+				}
+			}
 			try {
 				this.taskExecutor.execute(new ProduceRun(project, this.produceService, projectPackageList, tableList,
 						controlList, packageConvertList, templateConfigList, isOpenFile, produceCount, templatePath,
-						writePath, "tableProduce"));
+						writePath, "tableProduce", relationList));
 			} catch (RejectedExecutionException e) {
 				e.printStackTrace();
 				return resultFalse("线程异常，请联系管理员。");
@@ -758,10 +822,10 @@ public class ProduceController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping({ "queryProduceList" })
-	public Pagination <Produce> queryProduceList(Model model, Produce produce) {
+	public Pagination<Produce> queryProduceList(Model model, Produce produce) {
 		try {
 			Integer totalCount = this.produceService.queryProduceCount(produce);
-			List <Produce> dataList = this.produceService.queryProduceList(produce);
+			List<Produce> dataList = this.produceService.queryProduceList(produce);
 			return new Pagination<Produce>(produce, totalCount, dataList);
 		} catch (ServiceException e) {
 			LOG.error("ProduceController[查询列表失败]", e);

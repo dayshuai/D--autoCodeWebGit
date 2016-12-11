@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.autocode.mapper.RelationMapper">
+	<sql id="columns">
+		relationId,projectId,tableId,columnId,relation,relationTableId,relationColumnId,relationShowColumnId,cascadeDelete
+	</sql>
+	
+	<insert id="insert" parameterType="Relation"  useGeneratedKeys="true" keyProperty="">
+		INSERT INTO ac_relation (projectId,tableId,columnId,relation,relationTableId,relationColumnId,relationShowColumnId,cascadeDelete)
+		VALUES ( #{projectId},#{tableId},#{columnId},#{relation},#{relationTableId},#{relationColumnId},#{relationShowColumnId},#{cascadeDelete} )
+	</insert>
+
+	<update id="update" parameterType="Relation">
+		UPDATE ac_relation
+ 		SET projectId=#{projectId},tableId=#{tableId},columnId=#{columnId},relation=#{relation},relationTableId=#{relationTableId},relationColumnId=#{relationColumnId},relationShowColumnId=#{relationShowColumnId},cascadeDelete=#{cascadeDelete}
+		WHERE relationId = #{relationId}
+	</update>
+
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM ac_relation WHERE relationId = #{relationId}
+	</delete>
+	
+	<delete id="deleteObjectByProjectId" parameterType="Integer">
+		DELETE FROM ac_relation WHERE projectId = #{projectId}
+	</delete>
+
+	<select id="queryObjectCount" resultType="Integer" parameterType="Relation">
+		SELECT COUNT(1) FROM ac_relation 
+		WHERE projectId=${projectId} 
+		<if test="tableId!=null">
+			AND tableId=#{tableId}
+		</if>
+		<if test="relation!=null and relation!=''">
+			AND relation=#{relation}
+		</if>
+	</select>
+
+	<select id="queryObjectList" resultType="Relation" parameterType="Relation">
+		SELECT
+		r.*,t.tableName,p.projectName,t1.tableName as relationTableName,c.columnName,c1.columnName as relationColumnName,
+		case when c2.columnName is null then '不显示' ELSE c2.columnName END as relationShowColumnName,
+		case when c2.columnType is null then 'List' ELSE c2.columnType END as relationColumnType
+		FROM ac_relation r inner join ac_column c on c.columnId=r.columnId
+		inner join ac_column c1 on c1.columnId=r.relationColumnId
+		inner join ac_project p on r.projectId=p.projectId
+		inner join ac_table t on t.tableId=r.tableId
+		inner join ac_table t1 on t1.tableId=r.relationTableId
+		left join ac_column c2 on c2.columnId=r.relationShowColumnId
+		WHERE r.projectId=${projectId}
+		<if test="tableId!=null">
+			AND t.tableId=#{tableId}
+		</if>
+		<if test="relation!=null and relation!=''">
+			AND relation=#{relation}
+		</if>
+		ORDER BY relationId
+		LIMIT ${pageStart},${pageSize}
+	</select>
+
+	<select id="querySingleObject" resultType="Relation" parameterType="Integer">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_relation 
+		WHERE relationId = #{relationId}
+	</select>
+
+	<select id="queryObjectSelect" resultType="Relation" parameterType="Relation">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_relation 
+	</select>
+	
+	<select id="queryObjectListForColumnName" resultType="Relation" parameterType="Map">
+		SELECT
+		r.*,t.tableName,t.mappingName as tableMappingName,p.projectName,t1.mappingName as relationMappingName,t1.tableName as relationTableName,t1.mappingName relationTableMappingName,c.columnName,c.mappingName columnMappingName,c1.columnName as relationColumnName,c1.mappingName as relationColumnMappingName,
+		case when c2.columnName is null then '不显示' ELSE c2.columnName END as relationShowColumnName,
+		case when c2.columnType is null then 'List' ELSE c2.columnType END as relationColumnType,
+		c2.mappingName relationShowMappingName,
+		c2.columnZhName relationShowColumnZhName
+		FROM ac_relation r inner join ac_column c on c.columnId=r.columnId
+		inner join ac_column c1 on c1.columnId=r.relationColumnId
+		inner join ac_project p on r.projectId=p.projectId
+		inner join ac_table t on t.tableId=r.tableId
+		inner join ac_table t1 on t1.tableId=r.relationTableId
+		left join ac_column c2 on c2.columnId=r.relationShowColumnId
+		WHERE r.${columnName}=#{columnValue} ORDER BY r.tableId
+	</select>
+	
+	<select id="queryObjectListForRepeat" resultType="Relation" parameterType="Map">
+		SELECT
+		<include refid="columns"/>
+		FROM ac_relation 
+		WHERE projectId=#{projectId} 
+		and tableId=#{tableId}
+		and columnId=#{columnId}
+		and relationTableId=#{relationTableId}
+		and relationColumnId=#{relationColumnId}
+	</select>
+</mapper>

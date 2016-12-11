@@ -185,7 +185,7 @@ public class TableServiceImpl extends BaseService implements TableService {
 				readFlag = false;
 			}
 
-			/*Map <String, String> databaseConvertMap = new HashMap <String, String> ();
+			Map <String, String> databaseConvertMap = new HashMap <String, String> ();
 			Map <String, String> packageConvertMap = new HashMap <String, String> ();
 			if (readFlag) {
 				List <DatabaseConvert> databaseConvertList = this.databaseConvertService
@@ -203,7 +203,7 @@ public class TableServiceImpl extends BaseService implements TableService {
 						packageConvertMap.put(pc.getClassName(), pc.getPackageName());
 					}
 				}
-			}*/
+			}
 			//将表中column存入表中
 			if ((table.getColumnList() != null) && (table.getColumnList().size() > 0)) {
 				
@@ -213,17 +213,17 @@ public class TableServiceImpl extends BaseService implements TableService {
 						column.setProjectId(table.getProjectId());
 						column.setTableId(table.getTableId());
 						column.setShowOrder(Integer.valueOf(i + 1));
-						/*String columnType = (String) databaseConvertMap.get(workedColumnType(column.getMappingType()));
+						String columnType = (String) databaseConvertMap.get(workedColumnType(column.getMappingType()));
 						if (columnType != null)
 							column.setColumnType(columnType);
 						else {
-							column.setColumnType("null");
+							column.setColumnType("Error:0");
 						}
 						if (packageConvertMap.get(column.getColumnType()) != null)
 							column.setIsImportPackage("YES");
 						else {
 							column.setIsImportPackage("NO");
-						}*/
+						}
 					}
 					
 					if ((column.getIsQuery() == null) || (column.getIsQuery().equals(""))) {
